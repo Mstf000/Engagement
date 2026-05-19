@@ -639,3 +639,86 @@ button { cursor: pointer; border: none; }
 @keyframes ripple {
   to { transform: translate(-50%,-50%) scale(3); opacity: 0; }
 }
+
+/* ══ MESSAGE ══ */
+.message {
+  text-align: center;
+  padding: 38px 28px;
+}
+.msg-orn {
+  display: block;
+  font-size: 24px;
+  color: var(--sage-mid);
+  margin-bottom: 14px;
+}
+.msg-text {
+  font-family: var(--font-body);
+  font-size: 17px;
+  font-style: italic;
+  color: var(--text);
+  line-height: 1.85;
+  margin-bottom: 18px;
+}
+.msg-sig {
+  font-family: var(--font-label);
+  font-size: 7px;
+  letter-spacing: 4px;
+  color: var(--sage);
+  text-transform: uppercase;
+}
+
+/* ══ CLOSING ══ */
+.closing {
+  background: var(--sage);
+  padding: 44px 24px 48px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.cl-eye {
+  font-family: var(--font-label);
+  font-size: 7px;
+  letter-spacing: 5px;
+  color: rgba(255,255,255,0.65);
+  text-transform: uppercase;
+}
+.cl-names {
+  font-family: var(--font-display);
+  font-size: 38px;
+  font-style: italic;
+  color: var(--white);
+  line-height: 1;
+}
+.cl-tag {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-style: italic;
+  color: rgba(255,255,255,0.72);
+}
+
+/* ══ FOOTER ══ */
+.site-footer {
+  background: var(--sage-pale);
+  border-top: 1px solid #d8edd6;
+  padding: 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 7px;
+}
+.ft-names {
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-style: italic;
+  color: var(--text);
+}
+.ft-date {
+  font-family: var(--font-label);
+  font-size: 7px;
+  letter-spacing: 4px;
+  color: var(--sage);
+  text-transform: uppercase;
+}
