@@ -289,7 +289,7 @@ function initRSVP() {
     if (dodges >= MAX_DODGES) {
       q.style.display = 'none';
       noState.style.display = 'block';
-      const cryIcons = ['😭','😢','💔','🥺'];
+      const cryIcons = ['😭','💔'];
       spawnEmojiBurst(cryIcons, 40);
       const keepCry = setInterval(() => spawnEmojiBurst(cryIcons, 15), 350);
       setTimeout(() => clearInterval(keepCry), 2500);
