@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pick a Direction</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&family=Cinzel:wght@400;600&family=Playfair+Display:ital,wght@1,300;1,400&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: #ffffff;
+  min-height: 100vh;
+  font-family: 'Cormorant Garamond', serif;
+  padding: 40px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+}
+
+h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 11px; letter-spacing: 5px;
+  color: #7B9E77; text-transform: uppercase;
+  margin-bottom: 4px; text-align: center;
+}
+.sub { font-size: 14px; color: #aaa; font-style: italic; margin-bottom: 24px; text-align: center; }
+
+.card {
+  width: 340px; border-radius: 20px;
+  overflow: hidden; cursor: pointer;
+  box-shadow: 0 2px 16px rgba(0,0,0,0.06), 0 0 0 1px #e8ede8;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover  { transform: translateY(-3px); box-shadow: 0 10px 36px rgba(0,0,0,0.10), 0 0 0 1px #c8ddc6; }
+.card.active { box-shadow: 0 0 0 2.5px #7B9E77, 0 10px 36px rgba(123,158,119,0.18); }
+
+.option-label {
+  font-family: 'Cinzel', serif; font-size: 8px;
+  letter-spacing: 4px; text-transform: uppercase;
+  display: inline-block; padding: 5px 16px;
+  border-radius: 20px; margin-bottom: 14px;
+}
+
+/* ─────────────────────────────
+   A  White on White
+───────────────────────────── */
+.a { background: #ffffff; padding: 36px 28px 30px; text-align: center; display:flex; flex-direction:column; align-items:center; }
+.a .option-label { background: #f0f7ef; color: #7B9E77; }
+
+.a-names {
+  font-family: 'Playfair Display', serif;
+  font-size: 60px; font-style: italic; font-weight: 300;
+  color: #1a1a1a; line-height: 0.95;
+}
+.a-amp { color: #7B9E77; font-family: 'Playfair Display', serif; font-size: 28px; font-style: italic; display:block; margin: 4px 0; }
+.a-line { width: 36px; height: 1px; background: #b8d4b6; margin: 14px auto; }
+.a-date { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 4px; color: #7B9E77; }
+.a-sub  { font-size: 12px; color: #ccc; font-style: italic; margin-top: 4px; }
+.a-pills { display:flex; gap:8px; margin-top:18px; width:100%; }
+.a-pill {
+  flex:1; border: 1px solid #e4f0e2; border-radius: 12px;
+  padding: 12px 4px 8px; display:flex; flex-direction:column; align-items:center; gap:3px;
+}
+.a-pill b   { font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:300; color:#7B9E77; line-height:1; }
+.a-pill span{ font-family:'Cinzel',serif; font-size:5.5px; letter-spacing:2px; color:#aacba8; text-transform:uppercase; }
+
+.card-footer { background:#fafaf8; border-top:1px solid #f0f0ec; padding:14px 20px; text-align:center; }
+.card-footer p { font-size:13px; font-style:italic; color:#aaa; }
+
+
+/* ─────────────────────────────
+   B  Pale sage hero
+───────────────────────────── */
+.b-hero { background: #EAF5E8; padding: 36px 28px 30px; text-align:center; display:flex; flex-direction:column; align-items:center; }
+.b-hero .option-label { background: #fff; color: #7B9E77; }
+
+.b-names {
+  font-family: 'Playfair Display', serif;
+  font-size: 60px; font-style: italic; font-weight: 300;
+  color: #2C4A2A; line-height: 0.95;
+}
+.b-amp { color: #7B9E77; font-family:'Playfair Display',serif; font-size:28px; font-style:italic; display:block; margin:4px 0; }
+.b-date { font-family:'Cinzel',serif; font-size:8px; letter-spacing:4px; color:#6B8E67; margin-top:14px; }
+
+.b-pills { background:#fff; display:flex; gap:8px; padding:20px 20px; border-top:1px solid #daf0d8; }
+.b-pill  {
+  flex:1; background:#EAF5E8; border-radius:12px;
+  padding:12px 4px 8px; display:flex; flex-direction:column; align-items:center; gap:3px;
+}
+.b-pill b    { font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:300; color:#5A8A56; line-height:1; }
+.b-pill span { font-family:'Cinzel',serif; font-size:5.5px; letter-spacing:2px; color:#9DC49A; text-transform:uppercase; }
+
+.b-msg { background:#fff; padding:18px 24px; text-align:center; border-top:1px solid #eaf5e8; }
+.b-msg p { font-size:14px; font-style:italic; color:#5A7A58; line-height:1.7; }
+
+
+/* ─────────────────────────────
+   C  Sage hero full colour
+───────────────────────────── */
+.c-hero {
+  background: #7B9E77; padding: 38px 28px 32px;
+  text-align:center; display:flex; flex-direction:column; align-items:center;
+  position:relative; overflow:hidden;
+}
+.c-hero::before {
+  content:''; position:absolute;
+  width:280px; height:280px; border-radius:50%;
+  border:1px solid rgba(255,255,255,0.12);
+  top:50%; left:50%; transform:translate(-50%,-50%);
+  pointer-events:none;
+}
+.c-hero .option-label { background:rgba(255,255,255,0.2); color:#fff; position:relative; z-index:1; }
+.c-names {
+  font-family:'Playfair Display',serif;
+  font-size:60px; font-style:italic; font-weight:300;
+  color:#ffffff; line-height:0.95; position:relative; z-index:1;
+}
+.c-amp { color:rgba(255,255,255,0.65); font-family:'Playfair Display',serif; font-size:28px; font-style:italic; display:block; margin:4px 0; position:relative; z-index:1; }
+.c-date { font-family:'Cinzel',serif; font-size:8px; letter-spacing:4px; color:rgba(255,255,255,0.75); margin-top:14px; position:relative; z-index:1; }
+
+.c-pills { background:#fff; display:flex; gap:8px; padding:20px; border-top:1px solid #f0f8ef; }
+.c-pill  {
+  flex:1; background:#f4fbf3; border-radius:12px;
+  padding:12px 4px 8px; display:flex; flex-direction:column; align-items:center; gap:3px;
+  border:1px solid #daeeda;
+}
+.c-pill b    { font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:300; color:#7B9E77; line-height:1; }
+.c-pill span { font-family:'Cinzel',serif; font-size:5.5px; letter-spacing:2px; color:#aacba8; text-transform:uppercase; }
+
+.c-msg { background:#fff; padding:18px 24px; text-align:center; }
+.c-msg p { font-size:14px; font-style:italic; color:#6a8a68; line-height:1.7; }
+
+.pick-hint { font-family:'Cinzel',serif; font-size:9px; letter-spacing:3px; color:#ccc; text-transform:uppercase; margin-top:8px; }
+</style>
+</head>
+<body>
+
+<h1>Pick a Direction</h1>
+<div class="sub">All light mode — tap to choose</div>
+
+<!-- A -->
+<div class="card" data-choice="white" onclick="pick(this)">
+  <div class="a">
+    <span class="option-label">A — All White</span>
+    <div class="a-names">TFTF <span class="a-amp">&</span> RORO</div>
+    <div class="a-line"></div>
+    <div class="a-date">3 · JULY · 2026 · LUXOR</div>
+    <div class="a-sub">sage green as the only accent</div>
+    <div class="a-pills">
+      <div class="a-pill"><b>45</b><span>Days</span></div>
+      <div class="a-pill"><b>12</b><span>Hrs</span></div>
+      <div class="a-pill"><b>30</b><span>Min</span></div>
+      <div class="a-pill"><b>00</b><span>Sec</span></div>
+    </div>
+  </div>
+  <div class="card-footer"><p>Pure white everywhere · sage only on text accents & borders</p></div>
+</div>
+
+<!-- B -->
+<div class="card" data-choice="pale-sage" onclick="pick(this)">
+  <div class="b-hero">
+    <span class="option-label">B — Pale Sage Hero</span>
+    <div class="b-names">TFTF <span class="b-amp">&</span> RORO</div>
+    <div class="b-date">3 · JULY · 2026 · LUXOR</div>
+  </div>
+  <div class="b-pills">
+    <div class="b-pill"><b>45</b><span>Days</span></div>
+    <div class="b-pill"><b>12</b><span>Hrs</span></div>
+    <div class="b-pill"><b>30</b><span>Min</span></div>
+    <div class="b-pill"><b>00</b><span>Sec</span></div>
+  </div>
+  <div class="b-msg"><p>From Cairo to Luxor, two hearts found their way to each other.</p></div>
+  <div class="card-footer"><p>Very pale sage (#EAF5E8) for hero · white for all content</p></div>
+</div>
+
+<!-- C -->
+<div class="card" data-choice="sage-hero" onclick="pick(this)">
+  <div class="c-hero">
+    <span class="option-label">C — Sage Hero</span>
+    <div class="c-names">TFTF <span class="c-amp">&</span> RORO</div>
+    <div class="c-date">3 · JULY · 2026 · LUXOR</div>
+  </div>
+  <div class="c-pills">
+    <div class="c-pill"><b>45</b><span>Days</span></div>
+    <div class="c-pill"><b>12</b><span>Hrs</span></div>
+    <div class="c-pill"><b>30</b><span>Min</span></div>
+    <div class="c-pill"><b>00</b><span>Sec</span></div>
+  </div>
+  <div class="c-msg"><p>From Cairo to Luxor, two hearts found their way to each other.</p></div>
+  <div class="card-footer"><p>Solid sage green hero with white names · rest is all white</p></div>
+</div>
+
+<div class="pick-hint">↑ tap one</div>
+
+<script>
+function pick(el) {
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+  el.classList.add('active');
+  try {
+    fetch('/event', { method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({ type:'click', choice:el.dataset.choice, text:el.dataset.choice, timestamp:Date.now() }) });
+  } catch(e){}
+}
+</script>
+</body>
+</html>

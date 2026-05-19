@@ -1,0 +1,95 @@
+<h2>What's the overall mood?</h2>
+<p class="subtitle">Pick the vibe that feels most like you two</p>
+
+<div class="cards">
+
+  <div class="card" data-choice="egyptian-romance" onclick="toggleSelect(this)">
+    <div class="card-image" style="
+      background: linear-gradient(135deg, #1a0a2e 0%, #16213e 40%, #0f3460 70%, #c9a84c 100%);
+      height: 180px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    ">
+      <!-- Stars -->
+      <div style="position:absolute;top:10px;left:15px;color:#f0d080;font-size:10px;opacity:0.7">✦ ✧ ✦</div>
+      <div style="position:absolute;top:20px;right:25px;color:#f0d080;font-size:8px;opacity:0.5">✧ ✦</div>
+      <!-- Lotus -->
+      <div style="font-size:40px;margin-bottom:6px">𓆸</div>
+      <!-- Names in gold -->
+      <div style="font-family:Georgia,serif;color:#c9a84c;font-size:16px;letter-spacing:4px;font-style:italic">TFTF & RORO</div>
+      <!-- Hieroglyphic-style divider -->
+      <div style="color:#c9a84c;font-size:12px;margin-top:6px;opacity:0.8">— 𓂀 𓏏 𓆑 —</div>
+      <!-- Temple silhouette at bottom -->
+      <div style="position:absolute;bottom:0;left:0;right:0;height:40px;background:linear-gradient(to top,#0a0520,transparent);display:flex;align-items:flex-end;justify-content:center;padding-bottom:4px">
+        <div style="color:#8a6fc4;font-size:8px;letter-spacing:2px;opacity:0.6">𓉟 𓉟 𓉟 𓉟 𓉟 𓉟 𓉟 𓉟 𓉟</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Pharaonic Gold</h3>
+      <p>Deep midnight blue &amp; gold. Hieroglyphic touches, lotus motifs, Nile vibes. Ancient Egypt meets a royal proposal.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="modern-arabic" onclick="toggleSelect(this)">
+    <div class="card-image" style="
+      background: linear-gradient(160deg, #fdf6ec 0%, #f5e6d3 50%, #e8c9a0 100%);
+      height: 180px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    ">
+      <!-- Soft floral -->
+      <div style="position:absolute;top:-10px;right:-10px;font-size:70px;opacity:0.12;color:#b07d4a">❋</div>
+      <div style="position:absolute;bottom:-10px;left:-10px;font-size:70px;opacity:0.12;color:#b07d4a;transform:rotate(180deg)">❋</div>
+      <!-- Arabic calligraphy style text -->
+      <div style="font-family:Georgia,serif;font-size:28px;color:#7a4f2d;letter-spacing:2px;font-style:italic;margin-bottom:8px">مصطفى ونورهان</div>
+      <div style="width:60px;height:1px;background:#b07d4a;margin:4px 0"></div>
+      <div style="font-family:Georgia,serif;color:#9a6b3c;font-size:13px;letter-spacing:3px;margin-top:6px">3 · VII · 2026</div>
+      <div style="font-family:Georgia,serif;color:#b07d4a;font-size:11px;letter-spacing:2px;margin-top:4px">LUXOR</div>
+    </div>
+    <div class="card-body">
+      <h3>Desert Romance</h3>
+      <p>Warm sand, blush &amp; terracotta. Arabic calligraphy, soft florals. Elegant, warm, timeless — contemporary with roots.</p>
+    </div>
+  </div>
+
+  <div class="card" data-choice="luxor-nights" onclick="toggleSelect(this)">
+    <div class="card-image" style="
+      background: radial-gradient(ellipse at top, #2d1b69 0%, #11065e 40%, #050022 100%);
+      height: 180px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+    ">
+      <!-- Stars scatter -->
+      <div style="position:absolute;inset:0;font-size:6px;color:#ffe;opacity:0.5;line-height:18px;word-spacing:10px;letter-spacing:8px;padding:6px">✦✧✦✧✦✧✦✧✦✧✦✧✦✧✦✧✦✧✦✧✦✧✦✧✦✧✦✧✦✧✦✧✦✧✦✧✦✧✦✧✦✧✦✧✦✧✦✧✦✧</div>
+      <!-- Moon -->
+      <div style="position:absolute;top:12px;right:20px;font-size:22px;opacity:0.9">🌙</div>
+      <!-- Names -->
+      <div style="font-family:Georgia,serif;color:#e8c9ff;font-size:18px;letter-spacing:3px;font-style:italic;position:relative;z-index:1">TFTF & RORO</div>
+      <div style="color:#9b59ff;font-size:18px;margin:4px 0;position:relative;z-index:1">✦</div>
+      <div style="font-family:Georgia,serif;color:#c9a0ff;font-size:12px;letter-spacing:2px;position:relative;z-index:1">Under the Luxor Sky</div>
+      <!-- Temple silhouette -->
+      <div style="position:absolute;bottom:0;left:0;right:0;height:50px">
+        <svg viewBox="0 0 300 50" preserveAspectRatio="none" width="100%" height="100%">
+          <polygon points="0,50 0,30 20,30 20,20 40,20 40,10 50,10 50,20 70,20 70,30 90,30 90,28 120,28 120,15 130,15 130,28 160,28 160,30 180,30 180,20 200,20 200,10 210,10 210,20 230,20 230,30 260,30 260,32 300,32 300,50" fill="#1a0050" opacity="0.9"/>
+        </svg>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>Luxor Nights</h3>
+      <p>Deep violet &amp; purple starry sky. Temple silhouette, moonlight, mystery. Like a night walk through Karnak.</p>
+    </div>
+  </div>
+
+</div>

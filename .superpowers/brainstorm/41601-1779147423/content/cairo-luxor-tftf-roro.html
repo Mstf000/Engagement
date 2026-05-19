@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TFTF & RORO</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #0d0d0d;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 30px 20px 50px;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+  }
+
+  .page-title {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 5px;
+    color: #c9a84c;
+    text-align: center;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .page-sub {
+    font-size: 13px;
+    color: #666;
+    text-align: center;
+    margin-bottom: 36px;
+    font-style: italic;
+  }
+
+  /* Phone */
+  .phone {
+    width: 340px;
+    height: 700px;
+    background: #000;
+    border-radius: 46px;
+    border: 2px solid #2a2a2a;
+    box-shadow:
+      0 0 0 1px #444,
+      0 50px 100px rgba(0,0,0,0.9),
+      inset 0 0 0 1px #111;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Notch */
+  .phone::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 110px; height: 30px;
+    background: #000;
+    border-radius: 0 0 22px 22px;
+    z-index: 200;
+  }
+
+  .screen {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  /* Split */
+  .split {
+    width: 100%;
+    height: 100%;
+    display: flex;
+  }
+
+  .half {
+    position: relative;
+    overflow: hidden;
+    flex: 1;
+  }
+
+  .half img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
+
+  /* Different crop positions */
+  .half.left img  { object-position: 60% center; }
+  .half.right img { object-position: 40% center; }
+
+  /* Color grading overlays */
+  .half.left::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to right, rgba(10,20,40,0.3) 0%, rgba(5,15,35,0.6) 100%),
+      linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 30%, transparent 70%, rgba(0,0,0,0.5) 100%);
+  }
+
+  .half.right::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      linear-gradient(to left, rgba(40,18,5,0.3) 0%, rgba(30,12,0,0.6) 100%),
+      linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 30%, transparent 70%, rgba(0,0,0,0.5) 100%);
+  }
+
+  /* City labels — bottom corners */
+  .city-tag {
+    position: absolute;
+    bottom: 52px;
+    z-index: 10;
+    font-family: 'Cinzel', serif;
+    font-size: 7px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+  }
+  .left .city-tag  { left: 14px;  color: rgba(180, 210, 240, 0.75); }
+  .right .city-tag { right: 14px; color: rgba(240, 200, 130, 0.75); text-align: right; }
+
+  /* Gold center seam */
+  .seam {
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    z-index: 20;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgba(201,168,76,0.15) 8%,
+      rgba(201,168,76,0.7) 30%,
+      rgba(201,168,76,1)   45%,
+      rgba(201,168,76,1)   55%,
+      rgba(201,168,76,0.7) 70%,
+      rgba(201,168,76,0.15) 92%,
+      transparent 100%
+    );
+  }
+
+  /* Diamond on seam */
+  .seam-diamond {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    z-index: 25;
+    width: 8px;
+    height: 8px;
+    background: #c9a84c;
+    box-shadow: 0 0 12px rgba(201,168,76,0.8);
+  }
+
+  /* Central names block */
+  .center-block {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 30;
+    text-align: center;
+    width: 100%;
+    pointer-events: none;
+  }
+
+  .eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 6.5px;
+    letter-spacing: 5px;
+    color: rgba(201,168,76,0.85);
+    display: block;
+    margin-bottom: 14px;
+    text-transform: uppercase;
+  }
+
+  /* TFTF */
+  .name-tftf {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1;
+    letter-spacing: -1px;
+    color: #d0e8ff;
+    text-shadow:
+      0 0 40px rgba(100,160,220,0.5),
+      0 2px 30px rgba(0,0,0,0.9),
+      0 4px 60px rgba(0,0,0,0.8);
+    display: block;
+  }
+
+  /* Ampersand */
+  .amp-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 6px 0;
+  }
+  .amp-line {
+    height: 1px;
+    width: 28px;
+    background: linear-gradient(to right, transparent, rgba(201,168,76,0.6));
+  }
+  .amp-line.rev {
+    background: linear-gradient(to left, transparent, rgba(201,168,76,0.6));
+  }
+  .amp {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 22px;
+    font-style: italic;
+    color: #c9a84c;
+    text-shadow: 0 0 20px rgba(201,168,76,0.7);
+    line-height: 1;
+  }
+
+  /* RORO */
+  .name-roro {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 52px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1;
+    letter-spacing: -1px;
+    color: #ffe8b0;
+    text-shadow:
+      0 0 40px rgba(220,160,60,0.5),
+      0 2px 30px rgba(0,0,0,0.9),
+      0 4px 60px rgba(0,0,0,0.8);
+    display: block;
+  }
+
+  /* Date + location */
+  .date-block {
+    margin-top: 18px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .date-text {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 4px;
+    color: rgba(255,255,255,0.65);
+    text-shadow: 0 1px 10px rgba(0,0,0,1);
+  }
+  .gold-rule {
+    width: 36px;
+    height: 1px;
+    background: #c9a84c;
+    opacity: 0.7;
+  }
+  .location-text {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 5px;
+    color: rgba(201,168,76,0.85);
+    text-shadow: 0 1px 10px rgba(0,0,0,1);
+  }
+
+  /* Scroll hint */
+  .scroll-hint {
+    position: absolute;
+    bottom: 18px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 30;
+    text-align: center;
+  }
+  .scroll-hint .label {
+    font-family: 'Cinzel', serif;
+    font-size: 6px;
+    letter-spacing: 4px;
+    color: rgba(255,255,255,0.3);
+    display: block;
+    margin-bottom: 3px;
+  }
+  .scroll-hint .chevron {
+    color: rgba(201,168,76,0.4);
+    font-size: 10px;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%,100% { opacity:0.3; transform:translateY(0); }
+    50%      { opacity:0.8; transform:translateY(3px); }
+  }
+
+  /* caption under phone */
+  .caption {
+    margin-top: 18px;
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: #555;
+    text-align: center;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-title">TFTF & RORO — Split Screen</div>
+<div class="page-sub">Cairo on the left · Luxor on the right · Your names front and center</div>
+
+<div class="phone">
+  <div class="screen">
+    <div class="split">
+
+      <!-- LEFT: Cairo -->
+      <div class="half left">
+        <img
+          src="https://images.unsplash.com/photo-1572252009286-96b070b6e90b?auto=format&fit=crop&w=400&h=700&q=85"
+          alt="Cairo at night"
+          onerror="this.style.cssText='width:100%;height:100%;background:linear-gradient(180deg,#0d1b2e 0%,#1c3050 50%,#0a1020 100%);display:block'"
+        />
+        <span class="city-tag">CAIRO</span>
+      </div>
+
+      <!-- RIGHT: Luxor -->
+      <div class="half right">
+        <img
+          src="https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?auto=format&fit=crop&w=400&h=700&q=85"
+          alt="Luxor temple"
+          onerror="this.style.cssText='width:100%;height:100%;background:linear-gradient(180deg,#2d1500 0%,#4a2000 50%,#1a0a00 100%);display:block'"
+        />
+        <span class="city-tag">LUXOR</span>
+      </div>
+    </div>
+
+    <!-- Gold seam -->
+    <div class="seam"></div>
+    <div class="seam-diamond"></div>
+
+    <!-- Names -->
+    <div class="center-block">
+      <span class="eyebrow">ENGAGEMENT</span>
+
+      <span class="name-tftf">TFTF</span>
+
+      <div class="amp-row">
+        <div class="amp-line rev"></div>
+        <span class="amp">&</span>
+        <div class="amp-line"></div>
+      </div>
+
+      <span class="name-roro">RORO</span>
+
+      <div class="date-block">
+        <span class="date-text">3 · JULY · 2026</span>
+        <div class="gold-rule"></div>
+        <span class="location-text">LUXOR</span>
+      </div>
+    </div>
+
+    <!-- Scroll -->
+    <div class="scroll-hint">
+      <span class="label">SCROLL</span>
+      <div class="chevron">▾</div>
+    </div>
+  </div>
+</div>
+
+<div class="caption">Tap anywhere to continue</div>
+
+</body>
+</html>

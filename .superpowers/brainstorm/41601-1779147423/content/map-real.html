@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Map Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&family=Cinzel:wght@400;600&family=Playfair+Display:ital,wght@1,300;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root {
+  --sage:     #7B9E77;
+  --sage-mid: #9DC49A;
+  --sage-pale:#EAF5E8;
+  --sage-bg:  #F2FAF1;
+  --white:    #FFFFFF;
+  --text:     #1E2E1C;
+  --text-mid: #5A7A58;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: #f8faf8;
+  display:flex; flex-direction:column; align-items:center;
+  padding:30px 20px 60px;
+  font-family:'Cormorant Garamond',serif;
+}
+
+.phone {
+  width:340px;
+  background:var(--white);
+  border-radius:28px;
+  border:1px solid #d0e8ce;
+  box-shadow:0 4px 28px rgba(80,140,76,0.12);
+  overflow:hidden;
+}
+
+/* ── Map section ── */
+.map-section {
+  background:var(--white);
+  padding:32px 24px 28px;
+  display:flex; flex-direction:column;
+  align-items:center; text-align:center; gap:6px;
+}
+.s-eye   { font-family:'Cinzel',serif; font-size:7px; letter-spacing:5px; color:var(--sage); text-transform:uppercase; margin-bottom:2px; }
+.s-title { font-family:'Playfair Display',serif; font-size:22px; font-style:italic; color:var(--text); line-height:1.3; margin-bottom:12px; }
+
+/* Real map container */
+.map-container {
+  width:100%; height:320px;
+  border-radius:16px;
+  overflow:hidden;
+  border:1px solid #daeeda;
+  position:relative;
+}
+
+#map { width:100%; height:100%; }
+
+/* Leaflet overrides — remove default branding noise */
+.leaflet-control-attribution { display:none !important; }
+.leaflet-control-zoom        { display:none !important; }
+
+/* Custom marker */
+.city-marker {
+  display:flex; flex-direction:column; align-items:center;
+  pointer-events:none;
+}
+.city-pin {
+  width:14px; height:14px; border-radius:50%;
+  background:var(--sage); border:3px solid var(--white);
+  box-shadow:0 0 0 2px var(--sage), 0 3px 10px rgba(0,0,0,0.2);
+}
+.city-name-tag {
+  font-family:'Cinzel',serif; font-size:9px; letter-spacing:2px;
+  color:var(--text); background:var(--white);
+  padding:3px 8px; border-radius:6px; margin-top:4px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.12);
+  white-space:nowrap;
+}
+.city-sub-tag {
+  font-family:'Cormorant Garamond',serif; font-size:9px;
+  font-style:italic; color:var(--text-mid);
+  background:var(--white);
+  padding:1px 7px; border-radius:5px; margin-top:2px;
+  box-shadow:0 1px 5px rgba(0,0,0,0.08);
+  white-space:nowrap;
+}
+
+/* Distance badge */
+.distance-badge {
+  display:inline-flex; align-items:center; gap:12px;
+  background:var(--sage-bg); border:1px solid #d0e8ce;
+  border-radius:20px; padding:10px 22px; margin-top:12px;
+}
+.dist-num  { font-family:'Cormorant Garamond',serif; font-size:32px; font-weight:300; color:var(--sage); line-height:1; }
+.dist-unit { font-family:'Cinzel',serif; font-size:6.5px; letter-spacing:2px; color:var(--text-mid); text-transform:uppercase; line-height:1.5; }
+.dist-sep  { width:1px; height:28px; background:#c8e2c6; }
+.dist-heart{ font-family:'Cormorant Garamond',serif; font-size:13px; font-style:italic; color:var(--text-mid); line-height:1.5; }
+
+.map-caption {
+  font-family:'Cormorant Garamond',serif; font-size:16px;
+  font-style:italic; color:var(--text-mid); line-height:1.75;
+  margin-top:4px;
+}
+</style>
+</head>
+<body>
+
+<div class="phone">
+  <div class="map-section">
+    <span class="s-eye">OUR STORY</span>
+    <div class="s-title">Two Cities, One Love</div>
+
+    <div class="map-container">
+      <div id="map"></div>
+    </div>
+
+    <div class="distance-badge">
+      <div class="dist-num">500</div>
+      <div class="dist-unit">km<br>apart</div>
+      <div class="dist-sep"></div>
+      <div class="dist-heart">one<br>heart</div>
+    </div>
+
+    <p class="map-caption">
+      He came from the north.<br>
+      She waited in the south.<br>
+      Luxor brought them together.
+    </p>
+  </div>
+</div>
+
+<script>
+// Cairo & Luxor coordinates
+const CAIRO = [30.0444, 31.2357];
+const LUXOR = [25.6872, 32.6396];
+
+// Init map — centered between the two cities
+const map = L.map('map', {
+  center: [27.8, 30.5],
+  zoom: 6,
+  zoomControl: false,
+  dragging: false,
+  scrollWheelZoom: false,
+  doubleClickZoom: false,
+  touchZoom: false,
+  keyboard: false,
+  attributionControl: false
+});
+
+// CartoDB Positron — clean, light, minimal — perfect match
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  maxZoom: 19,
+  subdomains: 'abcd'
+}).addTo(map);
+
+// Custom marker factory
+function makeMarker(latlng, cityName, personName) {
+  const icon = L.divIcon({
+    className: '',
+    html: `
+      <div class="city-marker">
+        <div class="city-pin"></div>
+        <div class="city-name-tag">${cityName}</div>
+        <div class="city-sub-tag">${personName}</div>
+      </div>`,
+    iconAnchor: [7, 7]
+  });
+  return L.marker(latlng, { icon, interactive: false });
+}
+
+makeMarker(CAIRO, 'CAIRO',  'Mostafa').addTo(map);
+makeMarker(LUXOR, 'LUXOR', 'Nourhanne').addTo(map);
+
+// Animated dashed line Cairo → Luxor
+const routeLine = L.polyline([CAIRO, LUXOR], {
+  color: '#7B9E77',
+  weight: 2,
+  dashArray: '8 6',
+  lineCap: 'round',
+  opacity: 0
+}).addTo(map);
+
+// Fade line in after tiles load
+map.on('load', () => {});
+setTimeout(() => {
+  routeLine.setStyle({ opacity: 0.85 });
+
+  // Animate the dash offset to make it look like it's drawing
+  let offset = 0;
+  const animate = setInterval(() => {
+    offset -= 1;
+    routeLine.setStyle({ dashOffset: offset.toString() });
+    if (offset < -200) offset = 0;
+  }, 40);
+}, 800);
+</script>
+</body>
+</html>

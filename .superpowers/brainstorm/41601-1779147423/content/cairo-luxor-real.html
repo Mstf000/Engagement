@@ -1,0 +1,531 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cairo × Luxor — Design Direction</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@400;600&family=EB+Garamond:ital@1&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #111;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 20px 60px;
+  }
+
+  .page-title {
+    font-family: 'Cinzel', serif;
+    font-size: 11px;
+    letter-spacing: 5px;
+    color: #c9a84c;
+    text-align: center;
+    margin-bottom: 8px;
+    text-transform: uppercase;
+  }
+  .page-sub {
+    font-size: 13px;
+    color: #888;
+    text-align: center;
+    margin-bottom: 40px;
+    font-style: italic;
+  }
+
+  /* Phone frame */
+  .phone {
+    width: 340px;
+    height: 680px;
+    background: #0a0a0a;
+    border-radius: 44px;
+    border: 2px solid #333;
+    box-shadow:
+      0 0 0 1px #555,
+      0 40px 80px rgba(0,0,0,0.8),
+      inset 0 0 40px rgba(0,0,0,0.5);
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  /* Notch */
+  .phone::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 100px; height: 28px;
+    background: #0a0a0a;
+    border-radius: 0 0 20px 20px;
+    z-index: 100;
+  }
+
+  .screen {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Split hero */
+  .split-hero {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    position: relative;
+  }
+
+  .half {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .half img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+  }
+
+  .half-overlay {
+    position: absolute;
+    inset: 0;
+  }
+
+  .half.cairo .half-overlay {
+    background: linear-gradient(
+      to right,
+      rgba(10, 20, 40, 0.55) 0%,
+      rgba(10, 20, 40, 0.3) 80%,
+      rgba(10, 20, 40, 0.7) 100%
+    );
+  }
+
+  .half.luxor .half-overlay {
+    background: linear-gradient(
+      to left,
+      rgba(40, 20, 5, 0.55) 0%,
+      rgba(40, 20, 5, 0.3) 80%,
+      rgba(40, 20, 5, 0.7) 100%
+    );
+  }
+
+  /* City label */
+  .city-label {
+    position: absolute;
+    bottom: 80px;
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 5px;
+    opacity: 0.8;
+  }
+  .cairo .city-label { left: 14px; color: #a0c4e8; }
+  .luxor .city-label { right: 14px; color: #e8c080; text-align: right; }
+
+  /* Center divider overlay */
+  .center-overlay {
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 2px;
+    height: 100%;
+    background: linear-gradient(
+      to bottom,
+      transparent 0%,
+      rgba(201, 168, 76, 0.2) 15%,
+      rgba(201, 168, 76, 0.9) 40%,
+      rgba(201, 168, 76, 0.9) 60%,
+      rgba(201, 168, 76, 0.2) 85%,
+      transparent 100%
+    );
+    z-index: 10;
+  }
+
+  /* Central text block */
+  .center-text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 20;
+    text-align: center;
+    width: 220px;
+  }
+
+  .engagement-label {
+    font-family: 'Cinzel', serif;
+    font-size: 7px;
+    letter-spacing: 4px;
+    color: #c9a84c;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .names {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+  }
+
+  .name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 36px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 1;
+    text-shadow: 0 2px 20px rgba(0,0,0,0.9), 0 0 40px rgba(0,0,0,0.7);
+    color: #fff;
+    letter-spacing: 1px;
+  }
+
+  .name.tftf { color: #c5dff0; }
+  .name.roro { color: #f0d8a8; }
+
+  .ampersand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 20px;
+    font-style: italic;
+    color: #c9a84c;
+    margin: 4px 0;
+    text-shadow: 0 0 20px rgba(201, 168, 76, 0.6);
+  }
+
+  .date-location {
+    margin-top: 16px;
+    text-align: center;
+  }
+
+  .date-line {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 3px;
+    color: #ddd;
+    display: block;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.9);
+  }
+
+  .gold-divider-mini {
+    width: 40px;
+    height: 1px;
+    background: linear-gradient(to right, transparent, #c9a84c, transparent);
+    margin: 6px auto;
+  }
+
+  .location-line {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 4px;
+    color: #c9a84c;
+    display: block;
+    text-shadow: 0 1px 8px rgba(0,0,0,0.9);
+  }
+
+  /* Scroll hint */
+  .scroll-hint {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 20;
+    text-align: center;
+  }
+  .scroll-hint span {
+    display: block;
+    font-size: 8px;
+    letter-spacing: 3px;
+    color: rgba(255,255,255,0.4);
+    font-family: 'Cinzel', serif;
+  }
+  .scroll-hint .arrow {
+    font-size: 12px;
+    color: rgba(201,168,76,0.5);
+    margin-top: 2px;
+    animation: bounce 2s infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); opacity: 0.5; }
+    50% { transform: translateY(4px); opacity: 1; }
+  }
+
+  /* Second mockup — alternate layout */
+  .phone-alt {
+    width: 340px;
+    height: 680px;
+    background: #0a0a0a;
+    border-radius: 44px;
+    border: 2px solid #333;
+    box-shadow:
+      0 0 0 1px #555,
+      0 40px 80px rgba(0,0,0,0.8),
+      inset 0 0 40px rgba(0,0,0,0.5);
+    overflow: hidden;
+    position: relative;
+    flex-shrink: 0;
+    margin-top: 0;
+  }
+  .phone-alt::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 100px; height: 28px;
+    background: #0a0a0a;
+    border-radius: 0 0 20px 20px;
+    z-index: 100;
+  }
+
+  /* Full bleed alt — one city, then next city on scroll */
+  .full-hero {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .full-hero img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center bottom;
+    filter: brightness(0.55) saturate(1.2);
+  }
+
+  .full-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      to bottom,
+      rgba(5,10,25,0.1) 0%,
+      rgba(5,10,25,0.2) 40%,
+      rgba(5,10,25,0.85) 80%,
+      rgba(5,10,25,1) 100%
+    );
+  }
+
+  .full-text {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    padding: 0 28px 36px;
+    z-index: 10;
+  }
+
+  .full-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 5px;
+    color: #c9a84c;
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .full-names {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 48px;
+    font-weight: 300;
+    font-style: italic;
+    line-height: 0.95;
+    color: #fff;
+  }
+
+  .full-names .amp {
+    color: #c9a84c;
+    font-size: 32px;
+  }
+
+  .full-meta {
+    margin-top: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .full-meta-line {
+    height: 1px;
+    flex: 1;
+    background: linear-gradient(to right, #c9a84c, transparent);
+  }
+
+  .full-meta-text {
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 3px;
+    color: #aaa;
+  }
+
+  /* Two phones side by side */
+  .phones-row {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .phone-label {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 3px;
+    color: #666;
+    text-align: center;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+  }
+
+  .phone-wrapper { display: flex; flex-direction: column; }
+
+  /* Gold corner marks on selected phone */
+  .recommended-badge {
+    display: inline-block;
+    background: #c9a84c;
+    color: #0a0a0a;
+    font-family: 'Cinzel', serif;
+    font-size: 8px;
+    letter-spacing: 2px;
+    padding: 3px 10px;
+    margin-bottom: 10px;
+    align-self: center;
+    text-transform: uppercase;
+  }
+
+  /* Selection overlay */
+  .select-bar {
+    margin-top: 20px;
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .select-btn {
+    font-family: 'Cinzel', serif;
+    font-size: 9px;
+    letter-spacing: 3px;
+    padding: 10px 22px;
+    border: 1px solid #c9a84c;
+    color: #c9a84c;
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+  .select-btn:hover, .select-btn.active {
+    background: #c9a84c;
+    color: #0a0a0a;
+  }
+</style>
+</head>
+<body>
+<div class="page-title">Cairo × Luxor — Design Direction</div>
+<div class="page-sub">Two layout concepts for your approval</div>
+
+<div class="phones-row">
+
+  <!-- Option A: Split Screen -->
+  <div class="phone-wrapper">
+    <div class="phone-label">Option A — Split Screen</div>
+    <div class="phone" data-choice="split" onclick="toggleSelectPhone(this)">
+      <div class="screen">
+        <div class="split-hero">
+          <!-- Cairo half -->
+          <div class="half cairo">
+            <img src="https://images.unsplash.com/photo-1572252009286-96b070b6e90b?auto=format&fit=crop&w=400&h=680&q=80" alt="Cairo skyline at night" onerror="this.style.background='linear-gradient(180deg,#1c2b3a,#0a1628)';this.remove()"/>
+            <div class="half-overlay"></div>
+            <span class="city-label">CAIRO</span>
+          </div>
+
+          <!-- Center line -->
+          <div class="center-overlay"></div>
+
+          <!-- Center text -->
+          <div class="center-text">
+            <span class="engagement-label">ENGAGEMENT</span>
+            <div class="names">
+              <span class="name tftf">Mostafa</span>
+              <span class="ampersand">&</span>
+              <span class="name roro">Nourhanne</span>
+            </div>
+            <div class="date-location">
+              <span class="date-line">3 · JULY · 2026</span>
+              <div class="gold-divider-mini"></div>
+              <span class="location-line">LUXOR</span>
+            </div>
+          </div>
+
+          <!-- Luxor half -->
+          <div class="half luxor">
+            <img src="https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?auto=format&fit=crop&w=400&h=680&q=80" alt="Luxor temple" onerror="this.style.background='linear-gradient(180deg,#2d1b00,#0f0800)';this.remove()"/>
+            <div class="half-overlay"></div>
+            <span class="city-label">LUXOR</span>
+          </div>
+        </div>
+
+        <div class="scroll-hint">
+          <span>SCROLL</span>
+          <div class="arrow">↓</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option B: Full Bleed -->
+  <div class="phone-wrapper">
+    <div class="recommended-badge">★ Recommended</div>
+    <div class="phone-label">Option B — Full Bleed Hero</div>
+    <div class="phone-alt" data-choice="fullbleed" onclick="toggleSelectPhone(this)">
+      <div class="screen">
+        <div class="full-hero">
+          <img src="https://images.unsplash.com/photo-1604508021040-65b8e6994456?auto=format&fit=crop&w=400&h=680&q=80" alt="Luxor temple illuminated" onerror="this.style.background='linear-gradient(180deg,#1a0e00,#0a0500)';this.remove()"/>
+          <div class="full-overlay"></div>
+          <div class="full-text">
+            <span class="full-eyebrow">YOU ARE INVITED TO CELEBRATE</span>
+            <div class="full-names">
+              Mostafa<br>
+              <span class="amp">&</span><br>
+              Nourhanne
+            </div>
+            <div class="full-meta">
+              <div class="full-meta-line"></div>
+              <div class="full-meta-text">LUXOR · 03.07.26</div>
+              <div class="full-meta-line" style="background:linear-gradient(to left,#c9a84c,transparent)"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="select-bar">
+  <button class="select-btn" onclick="selectOption('split', this)">A — Split Screen</button>
+  <button class="select-btn" onclick="selectOption('fullbleed', this)">B — Full Bleed</button>
+  <button class="select-btn" onclick="selectOption('both', this)">Mix Both Ideas</button>
+</div>
+
+<script>
+function toggleSelectPhone(el) {
+  document.querySelectorAll('.phone, .phone-alt').forEach(p => p.style.outline = '');
+  el.style.outline = '2px solid #c9a84c';
+  const choice = el.dataset.choice;
+  selectOption(choice, document.querySelector(`.select-btn[onclick*="${choice}"]`));
+}
+
+function selectOption(choice, btn) {
+  document.querySelectorAll('.select-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  // Emit event for the harness
+  if (window.__brainstorm) window.__brainstorm.select(choice);
+  try {
+    const event = { type: 'click', choice, text: choice, timestamp: Date.now() };
+    fetch('/event', { method: 'POST', headers: {'Content-Type':'application/json'}, body: JSON.stringify(event) });
+  } catch(e) {}
+}
+</script>
+</body>
+</html>

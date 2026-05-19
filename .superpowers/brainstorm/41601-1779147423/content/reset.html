@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fresh Start — Pick a Direction</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&family=Cinzel:wght@400;600&family=Playfair+Display:ital,wght@1,300;1,400&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  background: #f0f0ec;
+  min-height: 100vh;
+  font-family: 'Cormorant Garamond', serif;
+  padding: 40px 20px 60px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+h1 {
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 5px;
+  color: #888;
+  text-transform: uppercase;
+  margin-bottom: 8px;
+  text-align: center;
+}
+.sub {
+  font-size: 14px;
+  color: #aaa;
+  font-style: italic;
+  margin-bottom: 28px;
+  text-align: center;
+}
+
+/* ── Card wrapper ── */
+.card {
+  width: 340px;
+  border-radius: 20px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  border: 2px solid transparent;
+}
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.13);
+}
+.card.selected {
+  border-color: #7B9E77;
+  box-shadow: 0 0 0 4px rgba(123,158,119,0.2);
+}
+
+/* ── tag ── */
+.tag {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+  padding: 4px 14px;
+  border-radius: 20px;
+  display: inline-block;
+  margin-bottom: 12px;
+}
+
+/* ═══════════════════════════════
+   OPTION A — Pure White + Sage
+═══════════════════════════════ */
+.a-outer {
+  background: #ffffff;
+  padding: 36px 28px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.a-tag { background: #EEF6EC; color: #7B9E77; }
+
+.a-names {
+  font-family: 'Playfair Display', serif;
+  font-size: 58px;
+  font-weight: 300;
+  font-style: italic;
+  color: #1a1a1a;
+  line-height: 0.95;
+}
+.a-amp {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  font-style: italic;
+  color: #7B9E77;
+  display: block;
+  margin: 2px 0;
+}
+.a-rule {
+  width: 40px; height: 1px;
+  background: #b0ccad;
+  margin: 14px auto;
+}
+.a-date {
+  font-family: 'Cinzel', serif;
+  font-size: 8px;
+  letter-spacing: 4px;
+  color: #7B9E77;
+  text-transform: uppercase;
+}
+.a-sub {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 12px;
+  font-style: italic;
+  color: #bbb;
+  margin-top: 4px;
+}
+/* mock countdown pills */
+.a-pills {
+  display: flex; gap: 8px; margin-top: 18px;
+}
+.a-pill {
+  flex: 1;
+  border: 1px solid #ddeedd;
+  border-radius: 10px;
+  padding: 10px 4px 8px;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.a-pill-num { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #7B9E77; font-weight: 300; line-height: 1; }
+.a-pill-lbl { font-family: 'Cinzel', serif; font-size: 5px; letter-spacing: 2px; color: #aac7a8; text-transform: uppercase; }
+
+/* description */
+.desc {
+  background: #f8f8f6;
+  padding: 14px 20px;
+  font-family: 'Cormorant Garamond', serif;
+  font-size: 14px;
+  font-style: italic;
+  color: #888;
+  text-align: center;
+  border-top: 1px solid #eeede9;
+}
+
+
+/* ═══════════════════════════════
+   OPTION B — Sage sections + White
+═══════════════════════════════ */
+.b-outer { background: #fff; overflow: hidden; }
+.b-hero {
+  background: #EAF4E8;
+  padding: 36px 28px 30px;
+  display: flex; flex-direction: column;
+  align-items: center; text-align: center;
+}
+.b-tag { background: #ffffff; color: #7B9E77; }
+
+.b-names {
+  font-family: 'Playfair Display', serif;
+  font-size: 54px; font-weight: 300; font-style: italic;
+  color: #2E4A2B;
+  line-height: 0.95;
+}
+.b-amp { font-family: 'Playfair Display', serif; font-size: 26px; font-style: italic; color: #7B9E77; display: block; margin: 2px 0; }
+.b-date { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 4px; color: #7B9E77; margin-top: 14px; }
+
+.b-countdown {
+  background: #fff;
+  padding: 22px 20px;
+  display: flex; gap: 8px;
+  border-top: 1px solid #e4f0e2;
+}
+.b-cbox {
+  flex: 1; background: #EAF4E8;
+  border-radius: 10px; padding: 10px 4px 8px;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+}
+.b-cnum { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #4A7A46; font-weight: 300; line-height: 1; }
+.b-clbl { font-family: 'Cinzel', serif; font-size: 5px; letter-spacing: 2px; color: #9DC49A; text-transform: uppercase; }
+
+.b-msg {
+  background: #EAF4E8;
+  padding: 20px 24px;
+  text-align: center;
+  border-top: 1px solid #d4e8d2;
+}
+.b-msg-text { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-style: italic; color: #3A5E38; line-height: 1.7; }
+
+
+/* ═══════════════════════════════
+   OPTION C — Sage hero + airy white body
+═══════════════════════════════ */
+.c-outer { background: #fff; overflow: hidden; }
+.c-hero {
+  background: #7B9E77;
+  padding: 40px 28px 36px;
+  display: flex; flex-direction: column;
+  align-items: center; text-align: center;
+  position: relative; overflow: hidden;
+}
+/* subtle circle bg element */
+.c-hero::before {
+  content: '';
+  position: absolute;
+  width: 260px; height: 260px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.15);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+.c-hero::after {
+  content: '';
+  position: absolute;
+  width: 200px; height: 200px;
+  border-radius: 50%;
+  border: 1px solid rgba(255,255,255,0.1);
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.c-tag { background: rgba(255,255,255,0.2); color: #fff; }
+
+.c-names {
+  font-family: 'Playfair Display', serif;
+  font-size: 58px; font-weight: 300; font-style: italic;
+  color: #ffffff;
+  line-height: 0.95;
+  position: relative; z-index: 1;
+}
+.c-amp { font-family: 'Playfair Display', serif; font-size: 26px; font-style: italic; color: rgba(255,255,255,0.7); display: block; margin: 2px 0; position: relative; z-index: 1; }
+.c-date { font-family: 'Cinzel', serif; font-size: 8px; letter-spacing: 4px; color: rgba(255,255,255,0.8); margin-top: 14px; position: relative; z-index: 1; }
+
+.c-countdown {
+  background: #fff;
+  padding: 22px 20px;
+  display: flex; gap: 8px;
+}
+.c-cbox {
+  flex: 1; background: #F4FAF4;
+  border-radius: 10px; padding: 10px 4px 8px;
+  display: flex; flex-direction: column; align-items: center; gap: 2px;
+  border: 1px solid #ddeedd;
+}
+.c-cnum { font-family: 'Cormorant Garamond', serif; font-size: 26px; color: #7B9E77; font-weight: 300; line-height: 1; }
+.c-clbl { font-family: 'Cinzel', serif; font-size: 5px; letter-spacing: 2px; color: #aac8a8; text-transform: uppercase; }
+
+.c-msg {
+  background: #fff;
+  padding: 18px 24px 22px;
+  text-align: center;
+  border-top: 1px solid #e8f4e6;
+}
+.c-msg-text { font-family: 'Cormorant Garamond', serif; font-size: 14px; font-style: italic; color: #5a7a58; line-height: 1.7; }
+
+
+/* select hint */
+.pick-hint {
+  font-family: 'Cinzel', serif;
+  font-size: 9px; letter-spacing: 3px;
+  color: #aaa; text-align: center;
+  margin-top: 8px;
+  text-transform: uppercase;
+}
+</style>
+</head>
+<body>
+
+<h1>Pick a Direction</h1>
+<div class="sub">Tap the one that feels right</div>
+
+<!-- ── A: Pure White ── -->
+<div class="card" data-choice="white" onclick="pick(this)">
+  <div class="a-outer">
+    <span class="tag a-tag">A — Pure White</span>
+    <div class="a-names">
+      TFTF
+      <span class="a-amp">&</span>
+      RORO
+    </div>
+    <div class="a-rule"></div>
+    <div class="a-date">3 · July · 2026 · Luxor</div>
+    <div class="a-sub">sage accents on clean white</div>
+    <div class="a-pills">
+      <div class="a-pill"><span class="a-pill-num">45</span><span class="a-pill-lbl">Days</span></div>
+      <div class="a-pill"><span class="a-pill-num">12</span><span class="a-pill-lbl">Hrs</span></div>
+      <div class="a-pill"><span class="a-pill-num">30</span><span class="a-pill-lbl">Min</span></div>
+      <div class="a-pill"><span class="a-pill-num">00</span><span class="a-pill-lbl">Sec</span></div>
+    </div>
+  </div>
+  <div class="desc">Everything white. Sage only for accents & details. Clean, luxury, minimal.</div>
+</div>
+
+<!-- ── B: Pale Sage sections ── -->
+<div class="card" data-choice="pale-sage" onclick="pick(this)">
+  <div class="b-outer">
+    <div class="b-hero">
+      <span class="tag b-tag">B — Pale Sage + White</span>
+      <div class="b-names">
+        TFTF
+        <span class="b-amp">&</span>
+        RORO
+      </div>
+      <div class="b-date">3 · JULY · 2026 · LUXOR</div>
+    </div>
+    <div class="b-countdown">
+      <div class="b-cbox"><span class="b-cnum">45</span><span class="b-clbl">Days</span></div>
+      <div class="b-cbox"><span class="b-cnum">12</span><span class="b-clbl">Hrs</span></div>
+      <div class="b-cbox"><span class="b-cnum">30</span><span class="b-clbl">Min</span></div>
+      <div class="b-cbox"><span class="b-cnum">00</span><span class="b-clbl">Sec</span></div>
+    </div>
+    <div class="b-msg">
+      <p class="b-msg-text">From Cairo to Luxor, two hearts found their way to each other.</p>
+    </div>
+  </div>
+  <div class="desc">Pale sage green (#EAF4E8) for hero & accents. White for content sections. Soft & botanical.</div>
+</div>
+
+<!-- ── C: Sage hero ── -->
+<div class="card" data-choice="sage-hero" onclick="pick(this)">
+  <div class="c-outer">
+    <div class="c-hero">
+      <span class="tag c-tag">C — Sage Hero + White Body</span>
+      <div class="c-names">
+        TFTF
+        <span class="c-amp">&</span>
+        RORO
+      </div>
+      <div class="c-date">3 · JULY · 2026 · LUXOR</div>
+    </div>
+    <div class="c-countdown">
+      <div class="c-cbox"><span class="c-cnum">45</span><span class="c-clbl">Days</span></div>
+      <div class="c-cbox"><span class="c-cnum">12</span><span class="c-clbl">Hrs</span></div>
+      <div class="c-cbox"><span class="c-cnum">30</span><span class="c-clbl">Min</span></div>
+      <div class="c-cbox"><span class="c-cnum">00</span><span class="c-clbl">Sec</span></div>
+    </div>
+    <div class="c-msg">
+      <p class="c-msg-text">From Cairo to Luxor, two hearts found their way to each other.</p>
+    </div>
+  </div>
+  <div class="desc">Full sage green hero with white names. Rest of page is clean white. Bold first impression.</div>
+</div>
+
+<div class="pick-hint">Tap a card to select</div>
+
+<script>
+function pick(el) {
+  document.querySelectorAll('.card').forEach(c => c.classList.remove('selected'));
+  el.classList.add('selected');
+  try {
+    fetch('/event', {
+      method: 'POST',
+      headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ type:'click', choice: el.dataset.choice, text: el.dataset.choice, timestamp: Date.now() })
+    });
+  } catch(e) {}
+}
+</script>
+</body>
+</html>

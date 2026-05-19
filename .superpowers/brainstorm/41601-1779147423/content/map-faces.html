@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Map — Face Avatars</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&family=Cinzel:wght@400;600&family=Playfair+Display:ital,wght@1,300;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root {
+  --sage:     #7B9E77;
+  --sage-mid: #9DC49A;
+  --sage-pale:#EAF5E8;
+  --sage-bg:  #F2FAF1;
+  --white:    #FFFFFF;
+  --text:     #1E2E1C;
+  --text-mid: #5A7A58;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background:#f8faf8;
+  display:flex; flex-direction:column; align-items:center;
+  padding:30px 20px 60px;
+  font-family:'Cormorant Garamond',serif;
+}
+.note {
+  font-family:'Cinzel',serif; font-size:8px; letter-spacing:3px;
+  color:var(--sage-mid); text-align:center; margin-bottom:16px;
+  text-transform:uppercase; background:var(--sage-bg);
+  padding:8px 18px; border-radius:20px; border:1px solid #d0e8ce;
+}
+
+.phone {
+  width:340px;
+  background:var(--white);
+  border-radius:28px;
+  border:1px solid #d0e8ce;
+  box-shadow:0 4px 28px rgba(80,140,76,0.12);
+  overflow:hidden;
+}
+.map-section {
+  background:var(--white);
+  padding:32px 24px 28px;
+  display:flex; flex-direction:column;
+  align-items:center; text-align:center; gap:6px;
+}
+.s-eye   { font-family:'Cinzel',serif; font-size:7px; letter-spacing:5px; color:var(--sage); text-transform:uppercase; margin-bottom:2px; }
+.s-title { font-family:'Playfair Display',serif; font-size:22px; font-style:italic; color:var(--text); line-height:1.3; margin-bottom:12px; }
+
+.map-container {
+  width:100%; height:320px;
+  border-radius:16px; overflow:hidden;
+  border:1px solid #daeeda; position:relative;
+}
+#map { width:100%; height:100%; }
+.leaflet-control-attribution,
+.leaflet-control-zoom { display:none !important; }
+
+/* ── Avatar badges ── */
+.avatar {
+  position:absolute; pointer-events:none; z-index:500;
+  display:flex; flex-direction:column; align-items:center; gap:3px;
+  transform:translate(-50%, -100%);
+  opacity:0; transition:opacity 0.4s ease;
+}
+.avatar.visible { opacity:1; }
+
+.avatar-ring {
+  width:38px; height:38px; border-radius:50%;
+  border:3px solid var(--white);
+  box-shadow:0 2px 12px rgba(0,0,0,0.18);
+  overflow:hidden; position:relative;
+  background:var(--sage-pale);
+}
+.avatar-ring img {
+  width:100%; height:100%; object-fit:cover; display:block;
+}
+/* fallback initials if no photo */
+.avatar-initial {
+  width:100%; height:100%;
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Playfair Display',serif;
+  font-style:italic; font-size:15px;
+  color:var(--sage);
+}
+
+/* TFTF ring — dark sage border */
+.avatar.tftf .avatar-ring { border-color:#2D4A2B; box-shadow:0 2px 12px rgba(45,74,43,0.3); }
+/* RORO ring — light sage border */
+.avatar.roro .avatar-ring { border-color:var(--sage); box-shadow:0 2px 12px rgba(123,158,119,0.3); }
+
+/* name tag below */
+.avatar-name {
+  font-family:'Cinzel',serif; font-size:7px; letter-spacing:2px;
+  background:var(--white); color:var(--text);
+  padding:2px 8px; border-radius:6px;
+  box-shadow:0 1px 6px rgba(0,0,0,0.1);
+  white-space:nowrap; border:1px solid #e0eedf;
+}
+
+/* tip arrow on avatar */
+.avatar::after {
+  content:'';
+  width:0; height:0;
+  border-left:5px solid transparent;
+  border-right:5px solid transparent;
+  border-top:6px solid var(--white);
+  filter:drop-shadow(0 2px 2px rgba(0,0,0,0.1));
+}
+
+/* RORO waiting — gentle bob */
+.avatar.roro.waiting .avatar-ring {
+  animation:roroWait 1.2s ease-in-out infinite alternate;
+}
+@keyframes roroWait {
+  from { transform:translateY(0) rotate(-3deg); }
+  to   { transform:translateY(-3px) rotate(3deg); }
+}
+
+/* TFTF travelling — slight bounce */
+.avatar.tftf.travelling .avatar-ring {
+  animation:tftfWalk 0.35s ease-in-out infinite alternate;
+}
+@keyframes tftfWalk {
+  from { transform:translateY(0) rotate(-4deg); }
+  to   { transform:translateY(-4px) rotate(4deg); }
+}
+
+/* celebration bounce — both */
+.avatar.celebrating .avatar-ring {
+  animation:celebrate 0.35s ease-in-out infinite alternate !important;
+}
+@keyframes celebrate {
+  from { transform:translateY(0) scale(1)   rotate(-5deg); }
+  to   { transform:translateY(-10px) scale(1.1) rotate(5deg); }
+}
+
+/* heart burst */
+.heart-pop {
+  position:absolute; pointer-events:none; z-index:600;
+  font-size:16px; opacity:0;
+  animation:heartBurst 1.4s ease-out forwards;
+}
+@keyframes heartBurst {
+  0%   { opacity:0; transform:translate(0,0) scale(0.5); }
+  20%  { opacity:1; }
+  100% { opacity:0; transform:translate(var(--tx), var(--ty)) scale(1.2); }
+}
+
+/* celebration bubble */
+.celeb-bubble {
+  position:absolute; z-index:600; pointer-events:none;
+  background:var(--white); border:1px solid #d0e8ce;
+  border-radius:14px; padding:6px 14px;
+  font-family:'Playfair Display',serif; font-size:13px;
+  font-style:italic; color:var(--text);
+  box-shadow:0 4px 16px rgba(0,0,0,0.1);
+  white-space:nowrap;
+  opacity:0;
+  animation:popBubble 0.5s cubic-bezier(.34,1.56,.64,1) 0.2s forwards;
+}
+@keyframes popBubble {
+  from { opacity:0; transform:scale(0.6) translateY(8px); }
+  to   { opacity:1; transform:scale(1)   translateY(0); }
+}
+
+/* city dots */
+.cdot { width:8px; height:8px; border-radius:50%; background:var(--sage); border:2px solid #fff; box-shadow:0 0 0 2px var(--sage-mid); }
+
+/* distance badge */
+.distance-badge {
+  display:inline-flex; align-items:center; gap:12px;
+  background:var(--sage-bg); border:1px solid #d0e8ce;
+  border-radius:20px; padding:10px 22px; margin-top:12px;
+}
+.dist-num  { font-family:'Cormorant Garamond',serif; font-size:32px; font-weight:300; color:var(--sage); line-height:1; }
+.dist-unit { font-family:'Cinzel',serif; font-size:6.5px; letter-spacing:2px; color:var(--text-mid); text-transform:uppercase; line-height:1.5; }
+.dist-sep  { width:1px; height:28px; background:#c8e2c6; }
+.dist-heart{ font-family:'Cormorant Garamond',serif; font-size:13px; font-style:italic; color:var(--text-mid); line-height:1.5; }
+
+.map-caption {
+  font-family:'Cormorant Garamond',serif; font-size:16px;
+  font-style:italic; color:var(--text-mid); line-height:1.75; margin-top:4px;
+}
+</style>
+</head>
+<body>
+
+<div class="note">Swap the placeholder initials for your real photos in the build</div>
+
+<div class="phone">
+  <div class="map-section">
+    <span class="s-eye">OUR STORY</span>
+    <div class="s-title">Two Cities, One Love</div>
+
+    <div class="map-container" id="mapWrap">
+      <div id="map"></div>
+    </div>
+
+    <div class="distance-badge">
+      <div class="dist-num">500</div>
+      <div class="dist-unit">km<br>apart</div>
+      <div class="dist-sep"></div>
+      <div class="dist-heart">one<br>heart</div>
+    </div>
+
+    <p class="map-caption">
+      He came from the north.<br>
+      She waited in the south.<br>
+      Luxor brought them together.
+    </p>
+  </div>
+</div>
+
+<script>
+const CAIRO = [30.0444, 31.2357];
+const LUXOR = [25.6872, 32.6396];
+
+const map = L.map('map', {
+  center:[27.8, 30.8], zoom:6,
+  zoomControl:false, dragging:false,
+  scrollWheelZoom:false, doubleClickZoom:false,
+  touchZoom:false, keyboard:false, attributionControl:false
+});
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  maxZoom:19, subdomains:'abcd'
+}).addTo(map);
+
+// City pin dots
+function cityPin(latlng) {
+  L.marker(latlng, {
+    icon:L.divIcon({ className:'', html:`<div class="cdot"></div>`, iconAnchor:[4,4] }),
+    interactive:false
+  }).addTo(map);
+}
+cityPin(CAIRO);
+cityPin(LUXOR);
+
+// Route line
+const routeLine = L.polyline([], {
+  color:'#7B9E77', weight:2.5,
+  dashArray:'8 5', lineCap:'round', opacity:0.75
+}).addTo(map);
+
+const wrap = document.getElementById('mapWrap');
+
+// ── Build avatar element ──
+function makeAvatar(cls, initial, imgSrc) {
+  const el = document.createElement('div');
+  el.className = `avatar ${cls}`;
+  el.innerHTML = `
+    <div class="avatar-ring">
+      ${imgSrc
+        ? `<img src="${imgSrc}" alt="${cls}" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+           <div class="avatar-initial" style="display:none">${initial}</div>`
+        : `<div class="avatar-initial">${initial}</div>`}
+    </div>
+    <div class="avatar-name">${cls.toUpperCase()}</div>`;
+  wrap.appendChild(el);
+  return el;
+}
+
+// ── Replace '' with real photo URLs when available ──
+// e.g. makeAvatar('tftf', 'M', '/photos/mostafa.jpg')
+const tftfEl = makeAvatar('tftf', 'M', '');
+const roroEl = makeAvatar('roro', 'N', '');
+
+function pos(latlng) {
+  const p = map.latLngToContainerPoint(latlng);
+  return { x:p.x, y:p.y };
+}
+function move(el, x, y) {
+  el.style.left = x + 'px';
+  el.style.top  = y + 'px';
+}
+function lerp(a,b,t){ return a+(b-a)*t; }
+
+function spawnHeart(x, y) {
+  const icons = ['🤍','💚','🌿','💛','🌸'];
+  const h = document.createElement('div');
+  h.className = 'heart-pop';
+  h.textContent = icons[Math.floor(Math.random()*icons.length)];
+  const tx = (Math.random()*60-30)+'px';
+  const ty = (-(Math.random()*50+20))+'px';
+  h.style.cssText = `left:${x}px;top:${y}px;--tx:${tx};--ty:${ty}`;
+  wrap.appendChild(h);
+  setTimeout(()=>h.remove(),1500);
+}
+
+map.whenReady(()=> setTimeout(runSequence, 700));
+
+function runSequence() {
+  const cairoPos = pos(CAIRO);
+  const luxorPos = pos(LUXOR);
+
+  // 1 — RORO appears in Luxor, waiting with bob animation
+  move(roroEl, luxorPos.x, luxorPos.y - 4);
+  roroEl.classList.add('visible','waiting');
+
+  // 2 — TFTF appears in Cairo after 1s
+  setTimeout(() => {
+    move(tftfEl, cairoPos.x, cairoPos.y - 4);
+    tftfEl.classList.add('visible');
+
+    // 3 — TFTF starts travelling after 0.7s
+    setTimeout(() => {
+      tftfEl.classList.add('travelling');
+
+      const steps    = 90;
+      const duration = 4200;
+      const interval = duration / steps;
+      let   step     = 0;
+
+      const pts = Array.from({length:steps+1}, (_,i) => {
+        const t = i/steps;
+        return [ lerp(CAIRO[0],LUXOR[0],t), lerp(CAIRO[1],LUXOR[1],t) ];
+      });
+
+      let dashOff = 0;
+      const march = setInterval(() => {
+        step++;
+        if (step > steps) { clearInterval(march); celebrate(luxorPos); return; }
+        const p = pos(pts[step]);
+        move(tftfEl, p.x, p.y - 4);
+        routeLine.setLatLngs(pts.slice(0, step+1));
+        dashOff -= 1.5;
+        routeLine.setStyle({ dashOffset: dashOff.toString() });
+      }, interval);
+
+    }, 700);
+  }, 1000);
+
+  // 4 — CELEBRATE
+  function celebrate(luxorPos) {
+    tftfEl.classList.remove('travelling');
+    roroEl.classList.remove('waiting');
+
+    // position TFTF just left of RORO
+    const p = pos(LUXOR);
+    move(tftfEl, p.x - 22, p.y - 4);
+    move(roroEl, p.x + 22, p.y - 4);
+
+    tftfEl.classList.add('celebrating');
+    roroEl.classList.add('celebrating');
+
+    // Celebration text bubble
+    const bubble = document.createElement('div');
+    bubble.className = 'celeb-bubble';
+    bubble.innerHTML = '🎉 Together at last!';
+    bubble.style.left = (p.x - 72) + 'px';
+    bubble.style.top  = (p.y - 90) + 'px';
+    wrap.appendChild(bubble);
+
+    // Heart burst loop
+    const burst = setInterval(()=>{
+      spawnHeart(p.x - 20, p.y - 30);
+      spawnHeart(p.x + 10, p.y - 30);
+    }, 280);
+
+    // Settle after 4s — keep avatars visible, stop jumping
+    setTimeout(()=>{
+      clearInterval(burst);
+      tftfEl.classList.remove('celebrating');
+      roroEl.classList.remove('celebrating');
+    }, 4000);
+  }
+}
+</script>
+</body>
+</html>

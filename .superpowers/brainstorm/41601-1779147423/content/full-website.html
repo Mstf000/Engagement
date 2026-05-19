@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TFTF & RORO — Full Preview</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;1,300;1,400&family=Cinzel:wght@400;600&family=Playfair+Display:ital,wght@1,400;1,500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --sage:       #7A9E76;
+    --sage-light: #A8C4A4;
+    --sage-pale:  #D4E6D1;
+    --sage-bg:    #EEF4ED;
+    --cream:      #F7F3EA;
+    --cream-dark: #EDE7D9;
+    --text:       #2E3D2C;
+    --text-light: #7A9170;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #ddd8cc;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 20px 60px;
+    font-family: 'Cormorant Garamond', Georgia, serif;
+  }
+
+  .page-title {
+    font-family: 'Cinzel', serif;
+    font-size: 10px;
+    letter-spacing: 5px;
+    color: var(--sage);
+    text-align: center;
+    margin-bottom: 6px;
+    text-transform: uppercase;
+  }
+  .page-sub {
+    font-size: 13px;
+    color: #8a9e88;
+    text-align: center;
+    margin-bottom: 30px;
+    font-style: italic;
+  }
+
+  /* Phone shell */
+  .phone {
+    width: 340px;
+    height: 700px;
+    background: var(--cream);
+    border-radius: 46px;
+    border: 2px solid #c0b8a8;
+    box-shadow:
+      0 0 0 1px #b0a898,
+      0 40px 80px rgba(0,0,0,0.2),
+      0 10px 30px rgba(0,0,0,0.1);
+    overflow: hidden;
+    position: relative;
+  }
+  .phone::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 50%; transform: translateX(-50%);
+    width: 110px; height: 30px;
+    background: var(--cream);
+    border-radius: 0 0 22px 22px;
+    z-index: 300;
+    border-bottom: 1px solid var(--cream-dark);
+  }
+
+  /* Scrollable screen */
+  .screen {
+    width: 100%;
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .screen::-webkit-scrollbar { display: none; }
+
+  /* ── SECTION 1: HERO ── */
+  .hero {
+    width: 100%;
+    height: 700px;
+    position: relative;
+    background: var(--cream);
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .split {
+    width: 100%;
+    height: 55%;
+    display: flex;
+    position: relative;
+    flex-shrink: 0;
+  }
+
+  .half { position: relative; overflow: hidden; flex: 1; }
+  .half img { width: 100%; height: 100%; object-fit: cover; display: block; filter: saturate(0.8) brightness(0.9); }
+  .half.left  img { object-position: 60% center; }
+  .half.right img { object-position: 40% center; }
+
+  .half.left::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(247,243,234,0.05) 0%, transparent 40%, rgba(247,243,234,0.98) 100%);
+  }
+  .half.right::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to bottom, rgba(247,243,234,0.05) 0%, transparent 40%, rgba(247,243,234,0.98) 100%);
+  }
+
+  .city-tag {
+    position: absolute;
+    top: 42px;
+    z-index: 10;
+    font-family: 'Cinzel', serif;
+    font-size: 7px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: rgba(247,243,234,0.9);
+    text-shadow: 0 1px 6px rgba(0,0,0,0.35);
+  }
+  .left  .city-tag { left: 14px; }
+  .right .city-tag { right: 14px; text-align: right; }
+
+  .seam-line {
+    position: absolute;
+    top: 0; bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 1px;
+    background: linear-gradient(to bottom, rgba(122,158,118,0) 0%, rgba(122,158,118,0.6) 30%, rgba(122,158,118,0.6) 70%, rgba(122,158,118,0) 100%);
+    z-index: 20;
+  }
+  .seam-diamond {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%) rotate(45deg);
+    width: 6px; height: 6px;
+    background: var(--cream);
+    border: 1.5px solid var(--sage);
+    z-index: 25;
+  }
+
+  /* Names under photos */
+  .hero-lower {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 0 20px 20px;
+    background: var(--cream);
+  }
+
+  .eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 6.5px;
+    letter-spacing: 5px;
+    color: var(--sage);
+    margin-bottom: 10px;
+    text-transform: uppercase;
+    display: block;
+  }
+
+  .names-block { text-align: center; line-height: 1; }
+  .name {
+    font-family: 'Playfair Display', serif;
+    font-size: 56px;
+    font-weight: 400;
+    font-style: italic;
+    color: var(--text);
+    letter-spacing: -1px;
+    line-height: 1;
+    display: block;
+  }
+  .amp-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 3px 0;
+  }
+  .amp-line {
+    height: 1px; width: 26px;
+    background: linear-gradient(to right, transparent, var(--sage-light));
+  }
+  .amp-line.rev { background: linear-gradient(to left, transparent, var(--sage-light)); }
+  .amp {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-style: italic;
+    color: var(--sage); line-height: 1;
+  }
+
+  .date-block {
+    margin-top: 12px;
+    display: flex; flex-direction: column;
+    align-items: center; gap: 5px;
+  }
+  .date-text {
+    font-family: 'Cinzel', serif;
+    font-size: 8px; letter-spacing: 4px;
+    color: var(--text-light);
+  }
+  .sage-rule { width: 32px; height: 1px; background: var(--sage-light); }
+  .location-text {
+    font-family: 'Cinzel', serif;
+    font-size: 8px; letter-spacing: 5px;
+    color: var(--sage);
+  }
+
+  .scroll-hint {
+    position: absolute;
+    bottom: 14px; left: 50%; transform: translateX(-50%);
+    z-index: 30; text-align: center;
+  }
+  .scroll-hint .lbl {
+    font-family: 'Cinzel', serif;
+    font-size: 6px; letter-spacing: 4px;
+    color: var(--sage-light); display: block; margin-bottom: 2px;
+  }
+  .chevron {
+    color: var(--sage-light); font-size: 10px;
+    animation: pulse 2s ease-in-out infinite;
+    display: block;
+  }
+  @keyframes pulse {
+    0%,100% { opacity:0.4; transform:translateY(0); }
+    50%      { opacity:1;   transform:translateY(3px); }
+  }
+
+  /* ── SECTION DIVIDER ── */
+  .section-divider {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 0 28px;
+    margin: 8px 0;
+  }
+  .div-line { flex: 1; height: 1px; background: var(--sage-pale); }
+  .div-motif { font-size: 12px; color: var(--sage-light); }
+
+  /* ── SECTION 2: COUNTDOWN ── */
+  .countdown-section {
+    background: var(--cream);
+    padding: 32px 24px 28px;
+    text-align: center;
+  }
+
+  .section-eyebrow {
+    font-family: 'Cinzel', serif;
+    font-size: 7px; letter-spacing: 5px;
+    color: var(--sage); margin-bottom: 8px;
+    display: block; text-transform: uppercase;
+  }
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px; font-style: italic;
+    color: var(--text); margin-bottom: 24px;
+    line-height: 1.2;
+  }
+
+  .countdown-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  .count-box {
+    background: var(--sage-bg);
+    border: 1px solid var(--sage-pale);
+    border-radius: 10px;
+    padding: 14px 6px 10px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+  }
+  .count-num {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 34px;
+    font-weight: 300;
+    color: var(--text);
+    line-height: 1;
+  }
+  .count-label {
+    font-family: 'Cinzel', serif;
+    font-size: 6px;
+    letter-spacing: 2px;
+    color: var(--sage);
+    text-transform: uppercase;
+  }
+
+  .countdown-caption {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 14px;
+    font-style: italic;
+    color: var(--text-light);
+  }
+
+  /* ── SECTION 3: DETAILS ── */
+  .details-section {
+    background: var(--sage-bg);
+    padding: 32px 24px;
+    text-align: center;
+  }
+
+  .detail-cards {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 20px;
+  }
+
+  .detail-card {
+    background: var(--cream);
+    border: 1px solid var(--sage-pale);
+    border-radius: 12px;
+    padding: 18px 16px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    text-align: left;
+  }
+
+  .detail-icon {
+    width: 40px; height: 40px;
+    background: var(--sage-pale);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+
+  .detail-info {}
+  .detail-label {
+    font-family: 'Cinzel', serif;
+    font-size: 7px; letter-spacing: 3px;
+    color: var(--sage); margin-bottom: 4px;
+    display: block; text-transform: uppercase;
+  }
+  .detail-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 16px; color: var(--text);
+    font-weight: 400; line-height: 1.3;
+    display: block;
+  }
+  .detail-sub {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 13px; color: var(--text-light);
+    font-style: italic;
+    display: block;
+  }
+
+  /* ── SECTION 4: MESSAGE ── */
+  .message-section {
+    background: var(--cream);
+    padding: 36px 28px;
+    text-align: center;
+  }
+
+  .message-ornament {
+    font-size: 22px; color: var(--sage-light);
+    margin-bottom: 14px; display: block;
+  }
+
+  .message-text {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 17px; font-style: italic;
+    color: var(--text); line-height: 1.7;
+    margin-bottom: 20px;
+  }
+
+  .message-sig {
+    font-family: 'Cinzel', serif;
+    font-size: 7px; letter-spacing: 4px;
+    color: var(--sage);
+    text-transform: uppercase;
+  }
+
+  /* ── SECTION 5: RSVP ── */
+  .rsvp-section {
+    background: var(--sage-bg);
+    padding: 36px 24px 40px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .rsvp-names {
+    font-family: 'Playfair Display', serif;
+    font-size: 32px; font-style: italic;
+    color: var(--text); line-height: 1;
+  }
+
+  .rsvp-tagline {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 15px; font-style: italic;
+    color: var(--text-light);
+    margin: -8px 0 4px;
+  }
+
+  .rsvp-btn {
+    display: block;
+    background: var(--sage);
+    color: var(--cream);
+    font-family: 'Cinzel', serif;
+    font-size: 9px; letter-spacing: 4px;
+    padding: 14px 36px;
+    border-radius: 2px;
+    text-transform: uppercase;
+    border: none;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: background 0.2s;
+  }
+  .rsvp-btn:hover { background: #5E7D59; }
+
+  .footer-note {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 12px; font-style: italic;
+    color: var(--text-light);
+    margin-top: 8px;
+  }
+
+  /* Footer */
+  .footer {
+    background: var(--cream-dark);
+    padding: 20px 24px;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+  }
+  .footer-names {
+    font-family: 'Playfair Display', serif;
+    font-size: 18px; font-style: italic;
+    color: var(--text);
+  }
+  .footer-date {
+    font-family: 'Cinzel', serif;
+    font-size: 7px; letter-spacing: 4px;
+    color: var(--sage);
+    text-transform: uppercase;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-title">TFTF & RORO — Full Scroll Preview</div>
+<div class="page-sub">Scroll inside the phone to see all sections</div>
+
+<div class="phone">
+  <div class="screen" id="screen">
+
+    <!-- ── 1. HERO ── -->
+    <div class="hero">
+      <div class="split">
+        <div class="half left">
+          <img src="https://images.unsplash.com/photo-1572252009286-96b070b6e90b?auto=format&fit=crop&w=400&h=420&q=85" alt="Cairo"
+            onerror="this.style.cssText='width:100%;height:100%;background:linear-gradient(160deg,#c8d4c0,#a8bc9a);display:block'"/>
+          <span class="city-tag">CAIRO</span>
+        </div>
+        <div class="half right">
+          <img src="https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?auto=format&fit=crop&w=400&h=420&q=85" alt="Luxor"
+            onerror="this.style.cssText='width:100%;height:100%;background:linear-gradient(160deg,#c8d4c0,#a8bc9a);display:block'"/>
+          <span class="city-tag">LUXOR</span>
+        </div>
+        <div class="seam-line"><div class="seam-diamond"></div></div>
+      </div>
+
+      <div class="hero-lower">
+        <span class="eyebrow">ENGAGEMENT</span>
+        <div class="names-block">
+          <span class="name">TFTF</span>
+          <div class="amp-row">
+            <div class="amp-line rev"></div>
+            <span class="amp">&</span>
+            <div class="amp-line"></div>
+          </div>
+          <span class="name">RORO</span>
+        </div>
+        <div class="date-block">
+          <span class="date-text">3 · JULY · 2026</span>
+          <div class="sage-rule"></div>
+          <span class="location-text">LUXOR</span>
+        </div>
+      </div>
+
+      <div class="scroll-hint">
+        <span class="lbl">SCROLL</span>
+        <span class="chevron">▾</span>
+      </div>
+    </div>
+
+    <!-- ── 2. COUNTDOWN ── -->
+    <div class="section-divider">
+      <div class="div-line"></div>
+      <div class="div-motif">✦</div>
+      <div class="div-line"></div>
+    </div>
+
+    <div class="countdown-section">
+      <span class="section-eyebrow">COUNTING DOWN</span>
+      <div class="section-title">Until We Say Yes</div>
+      <div class="countdown-grid">
+        <div class="count-box">
+          <span class="count-num" id="cd-days">45</span>
+          <span class="count-label">Days</span>
+        </div>
+        <div class="count-box">
+          <span class="count-num" id="cd-hours">12</span>
+          <span class="count-label">Hours</span>
+        </div>
+        <div class="count-box">
+          <span class="count-num" id="cd-mins">30</span>
+          <span class="count-label">Mins</span>
+        </div>
+        <div class="count-box">
+          <span class="count-num" id="cd-secs">00</span>
+          <span class="count-label">Secs</span>
+        </div>
+      </div>
+      <p class="countdown-caption">3rd of July, 2026 — Luxor</p>
+    </div>
+
+    <!-- ── 3. DETAILS ── -->
+    <div class="section-divider">
+      <div class="div-line"></div>
+      <div class="div-motif">✦</div>
+      <div class="div-line"></div>
+    </div>
+
+    <div class="details-section">
+      <span class="section-eyebrow">THE DETAILS</span>
+      <div class="section-title">Join Us in Luxor</div>
+      <div class="detail-cards">
+        <div class="detail-card">
+          <div class="detail-icon">📅</div>
+          <div class="detail-info">
+            <span class="detail-label">Date</span>
+            <span class="detail-value">Friday, 3rd July 2026</span>
+            <span class="detail-sub">Evening celebration</span>
+          </div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-icon">📍</div>
+          <div class="detail-info">
+            <span class="detail-label">Location</span>
+            <span class="detail-value">Luxor, Egypt</span>
+            <span class="detail-sub">Venue details to follow</span>
+          </div>
+        </div>
+        <div class="detail-card">
+          <div class="detail-icon">💌</div>
+          <div class="detail-info">
+            <span class="detail-label">Dress Code</span>
+            <span class="detail-value">Elegant Attire</span>
+            <span class="detail-sub">Sage & cream tones welcome</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── 4. MESSAGE ── -->
+    <div class="section-divider">
+      <div class="div-line"></div>
+      <div class="div-motif">✦</div>
+      <div class="div-line"></div>
+    </div>
+
+    <div class="message-section">
+      <span class="message-ornament">❧</span>
+      <p class="message-text">
+        From Cairo to Luxor, two hearts found their way to each other. Join us as we celebrate the beginning of forever.
+      </p>
+      <span class="message-sig">TFTF & RORO · 2026</span>
+    </div>
+
+    <!-- ── 5. RSVP ── -->
+    <div class="section-divider">
+      <div class="div-line"></div>
+      <div class="div-motif">✦</div>
+      <div class="div-line"></div>
+    </div>
+
+    <div class="rsvp-section">
+      <span class="section-eyebrow">YOU'RE INVITED</span>
+      <div class="rsvp-names">TFTF & RORO</div>
+      <p class="rsvp-tagline">would love your presence</p>
+      <button class="rsvp-btn">Confirm Attendance</button>
+      <p class="footer-note">Kindly respond by 20th June 2026</p>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      <div class="footer-names">TFTF & RORO</div>
+      <div class="footer-date">3 · July · 2026 · Luxor</div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function updateCountdown() {
+    const target = new Date('2026-07-03T18:00:00');
+    const now = new Date();
+    const diff = target - now;
+    if (diff <= 0) return;
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor((diff % 86400000) / 3600000);
+    const m = Math.floor((diff % 3600000) / 60000);
+    const s = Math.floor((diff % 60000) / 1000);
+    document.getElementById('cd-days').textContent  = String(d).padStart(2,'0');
+    document.getElementById('cd-hours').textContent = String(h).padStart(2,'0');
+    document.getElementById('cd-mins').textContent  = String(m).padStart(2,'0');
+    document.getElementById('cd-secs').textContent  = String(s).padStart(2,'0');
+  }
+  updateCountdown();
+  setInterval(updateCountdown, 1000);
+</script>
+
+</body>
+</html>

@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Map — Stickman</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;1,300;1,400&family=Cinzel:wght@400;600&family=Playfair+Display:ital,wght@1,300;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+:root {
+  --sage:     #7B9E77;
+  --sage-mid: #9DC49A;
+  --sage-pale:#EAF5E8;
+  --sage-bg:  #F2FAF1;
+  --white:    #FFFFFF;
+  --text:     #1E2E1C;
+  --text-mid: #5A7A58;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+body {
+  background:#f8faf8;
+  display:flex; flex-direction:column; align-items:center;
+  padding:30px 20px 60px;
+  font-family:'Cormorant Garamond',serif;
+}
+
+.phone {
+  width:340px;
+  background:var(--white);
+  border-radius:28px;
+  border:1px solid #d0e8ce;
+  box-shadow:0 4px 28px rgba(80,140,76,0.12);
+  overflow:hidden;
+}
+
+.map-section {
+  background:var(--white);
+  padding:32px 24px 28px;
+  display:flex; flex-direction:column;
+  align-items:center; text-align:center; gap:6px;
+}
+.s-eye   { font-family:'Cinzel',serif; font-size:7px; letter-spacing:5px; color:var(--sage); text-transform:uppercase; margin-bottom:2px; }
+.s-title { font-family:'Playfair Display',serif; font-size:22px; font-style:italic; color:var(--text); line-height:1.3; margin-bottom:12px; }
+
+.map-container {
+  width:100%; height:320px;
+  border-radius:16px; overflow:hidden;
+  border:1px solid #daeeda;
+  position:relative;
+}
+#map { width:100%; height:100%; }
+.leaflet-control-attribution,
+.leaflet-control-zoom { display:none !important; }
+
+/* ── Stickman SVGs ── */
+.stick {
+  position:absolute;
+  pointer-events:none;
+  z-index:500;
+  transition:left 0.05s linear, top 0.05s linear;
+}
+
+/* walking TFTF */
+.tftf-svg .head { animation: none; }
+.tftf-svg .leg-l { transform-origin:50% 40%; animation:walkL 0.4s ease-in-out infinite alternate; }
+.tftf-svg .leg-r { transform-origin:50% 40%; animation:walkR 0.4s ease-in-out infinite alternate; }
+.tftf-svg .arm-l { transform-origin:50% 30%; animation:armSwingL 0.4s ease-in-out infinite alternate; }
+.tftf-svg .arm-r { transform-origin:50% 30%; animation:armSwingR 0.4s ease-in-out infinite alternate; }
+@keyframes walkL  { from{transform:rotate(-25deg)} to{transform:rotate(20deg)} }
+@keyframes walkR  { from{transform:rotate(20deg)}  to{transform:rotate(-25deg)} }
+@keyframes armSwingL { from{transform:rotate(20deg)}  to{transform:rotate(-20deg)} }
+@keyframes armSwingR { from{transform:rotate(-20deg)} to{transform:rotate(20deg)} }
+
+/* waiting RORO — waving */
+.roro-svg .wave-arm { transform-origin:30% 38%; animation:wave 0.8s ease-in-out infinite alternate; }
+@keyframes wave { from{transform:rotate(-30deg)} to{transform:rotate(30deg)} }
+
+/* celebration — both jump */
+.celebrating { animation:jumpUp 0.4s ease-in-out infinite alternate !important; }
+@keyframes jumpUp { from{transform:translateY(0)} to{transform:translateY(-8px)} }
+
+/* hearts */
+.heart-float {
+  position:absolute; z-index:600; font-size:14px;
+  animation:floatHeart 1.5s ease-out forwards;
+  pointer-events:none;
+}
+@keyframes floatHeart {
+  0%   { opacity:1; transform:translateY(0) scale(1); }
+  100% { opacity:0; transform:translateY(-50px) scale(1.3); }
+}
+
+/* label bubbles */
+.bubble {
+  position:absolute; z-index:550;
+  background:var(--white); border:1px solid #d0e8ce;
+  border-radius:8px; padding:3px 7px;
+  font-family:'Cinzel',serif; font-size:7px;
+  letter-spacing:2px; color:var(--text);
+  box-shadow:0 2px 8px rgba(0,0,0,.1);
+  white-space:nowrap;
+  transform:translateX(-50%);
+  pointer-events:none;
+}
+.bubble.bottom::after {
+  content:''; position:absolute; top:100%; left:50%; transform:translateX(-50%);
+  border:4px solid transparent; border-top-color:#d0e8ce;
+}
+.bubble.top::before {
+  content:''; position:absolute; bottom:100%; left:50%; transform:translateX(-50%);
+  border:4px solid transparent; border-bottom-color:#d0e8ce;
+}
+
+/* city dots */
+.city-dot-marker .dot {
+  width:10px; height:10px; border-radius:50%;
+  background:var(--sage); border:2px solid #fff;
+  box-shadow:0 0 0 2px var(--sage);
+}
+.city-dot-marker .pulse {
+  position:absolute; top:50%; left:50%; transform:translate(-50%,-50%);
+  width:10px; height:10px; border-radius:50%;
+  background:var(--sage); opacity:0.4;
+  animation:ripple 1.5s ease-out infinite;
+}
+@keyframes ripple { to{transform:translate(-50%,-50%) scale(3);opacity:0;} }
+
+/* celebration text */
+.celeb-text {
+  position:absolute; z-index:600;
+  font-family:'Playfair Display',serif;
+  font-size:13px; font-style:italic; color:var(--sage);
+  background:var(--white); border:1px solid #d0e8ce;
+  border-radius:12px; padding:5px 12px;
+  box-shadow:0 3px 12px rgba(0,0,0,.1);
+  white-space:nowrap;
+  opacity:0; animation:popCeleb 0.5s ease 0.2s forwards;
+  pointer-events:none;
+}
+@keyframes popCeleb {
+  0%  {opacity:0;transform:scale(0.5) translateY(10px);}
+  60% {transform:scale(1.08) translateY(-2px);}
+  100%{opacity:1;transform:scale(1) translateY(0);}
+}
+
+/* distance badge */
+.distance-badge {
+  display:inline-flex; align-items:center; gap:12px;
+  background:var(--sage-bg); border:1px solid #d0e8ce;
+  border-radius:20px; padding:10px 22px; margin-top:12px;
+}
+.dist-num  { font-family:'Cormorant Garamond',serif; font-size:32px; font-weight:300; color:var(--sage); line-height:1; }
+.dist-unit { font-family:'Cinzel',serif; font-size:6.5px; letter-spacing:2px; color:var(--text-mid); text-transform:uppercase; line-height:1.5; }
+.dist-sep  { width:1px; height:28px; background:#c8e2c6; }
+.dist-heart{ font-family:'Cormorant Garamond',serif; font-size:13px; font-style:italic; color:var(--text-mid); line-height:1.5; }
+
+.map-caption {
+  font-family:'Cormorant Garamond',serif; font-size:16px;
+  font-style:italic; color:var(--text-mid); line-height:1.75; margin-top:4px;
+}
+</style>
+</head>
+<body>
+<div class="phone">
+  <div class="map-section">
+    <span class="s-eye">OUR STORY</span>
+    <div class="s-title">Two Cities, One Love</div>
+
+    <div class="map-container" id="mapWrap">
+      <div id="map"></div>
+    </div>
+
+    <div class="distance-badge">
+      <div class="dist-num">500</div>
+      <div class="dist-unit">km<br>apart</div>
+      <div class="dist-sep"></div>
+      <div class="dist-heart">one<br>heart</div>
+    </div>
+
+    <p class="map-caption">
+      He came from the north.<br>
+      She waited in the south.<br>
+      Luxor brought them together.
+    </p>
+  </div>
+</div>
+
+<script>
+const CAIRO = [30.0444, 31.2357];
+const LUXOR = [25.6872, 32.6396];
+
+const map = L.map('map', {
+  center: [27.8, 30.8],
+  zoom: 6,
+  zoomControl:false, dragging:false,
+  scrollWheelZoom:false, doubleClickZoom:false,
+  touchZoom:false, keyboard:false, attributionControl:false
+});
+
+L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+  maxZoom:19, subdomains:'abcd'
+}).addTo(map);
+
+// City dot markers
+function cityDot(latlng) {
+  return L.marker(latlng, {
+    icon: L.divIcon({
+      className:'',
+      html:`<div class="city-dot-marker" style="position:relative;width:10px;height:10px">
+              <div class="pulse"></div>
+              <div class="dot"></div>
+            </div>`,
+      iconAnchor:[5,5]
+    }),
+    interactive:false
+  }).addTo(map);
+}
+cityDot(CAIRO);
+cityDot(LUXOR);
+
+// Route polyline (drawn progressively by JS)
+const routeLine = L.polyline([], {
+  color:'#7B9E77', weight:2,
+  dashArray:'7 5', lineCap:'round', opacity:0.7
+}).addTo(map);
+
+const wrap = document.getElementById('mapWrap');
+
+// ── TFTF stickman SVG (walking) ──
+const tftfEl = document.createElement('div');
+tftfEl.className = 'stick';
+tftfEl.innerHTML = `
+<svg class="tftf-svg" width="28" height="42" viewBox="0 0 28 42" fill="none">
+  <!-- head -->
+  <circle cx="14" cy="7" r="5.5" stroke="#2D4A2B" stroke-width="2"/>
+  <!-- body -->
+  <line x1="14" y1="12.5" x2="14" y2="26" stroke="#2D4A2B" stroke-width="2" stroke-linecap="round"/>
+  <!-- arms -->
+  <line class="arm-l" x1="14" y1="16" x2="5"  y2="22" stroke="#2D4A2B" stroke-width="2" stroke-linecap="round"/>
+  <line class="arm-r" x1="14" y1="16" x2="23" y2="22" stroke="#2D4A2B" stroke-width="2" stroke-linecap="round"/>
+  <!-- legs -->
+  <line class="leg-l" x1="14" y1="26" x2="7"  y2="38" stroke="#2D4A2B" stroke-width="2" stroke-linecap="round"/>
+  <line class="leg-r" x1="14" y1="26" x2="21" y2="38" stroke="#2D4A2B" stroke-width="2" stroke-linecap="round"/>
+</svg>`;
+tftfEl.style.cssText = 'opacity:0;transform:translate(-50%,-100%)';
+wrap.appendChild(tftfEl);
+
+// TFTF label
+const tftfLabel = document.createElement('div');
+tftfLabel.className = 'bubble bottom';
+tftfLabel.textContent = 'TFTF';
+tftfLabel.style.cssText = 'opacity:0;transform:translateX(-50%)';
+wrap.appendChild(tftfLabel);
+
+// ── RORO stickman SVG (waiting / waving) ──
+const roroEl = document.createElement('div');
+roroEl.className = 'stick';
+roroEl.innerHTML = `
+<svg class="roro-svg" width="28" height="42" viewBox="0 0 28 42" fill="none">
+  <!-- head -->
+  <circle cx="14" cy="7" r="5.5" stroke="#7B9E77" stroke-width="2"/>
+  <!-- small bow on head -->
+  <path d="M10,3 Q14,0 18,3" stroke="#9DC49A" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <!-- body -->
+  <line x1="14" y1="12.5" x2="14" y2="26" stroke="#7B9E77" stroke-width="2" stroke-linecap="round"/>
+  <!-- waving arm (right/left depends on facing direction) -->
+  <line class="wave-arm" x1="14" y1="16" x2="5" y2="21" stroke="#7B9E77" stroke-width="2" stroke-linecap="round"/>
+  <!-- still arm -->
+  <line x1="14" y1="17" x2="22" y2="22" stroke="#7B9E77" stroke-width="2" stroke-linecap="round"/>
+  <!-- legs standing -->
+  <line x1="14" y1="26" x2="9"  y2="38" stroke="#7B9E77" stroke-width="2" stroke-linecap="round"/>
+  <line x1="14" y1="26" x2="19" y2="38" stroke="#7B9E77" stroke-width="2" stroke-linecap="round"/>
+  <!-- dress hint (small triangle) -->
+  <path d="M9,26 L14,30 L19,26" stroke="#9DC49A" stroke-width="1.2" fill="none" stroke-linecap="round"/>
+</svg>`;
+roroEl.style.cssText = 'opacity:0;transform:translate(-50%,-100%)';
+wrap.appendChild(roroEl);
+
+// RORO label
+const roroLabel = document.createElement('div');
+roroLabel.className = 'bubble bottom';
+roroLabel.textContent = 'RORO';
+roroLabel.style.cssText = 'opacity:0;transform:translateX(-50%)';
+wrap.appendChild(roroLabel);
+
+// ── helpers ──
+function latLngToPos(ll) {
+  const p = map.latLngToContainerPoint(ll);
+  return { x: p.x, y: p.y };
+}
+
+function placeEl(el, x, y) {
+  el.style.left = x + 'px';
+  el.style.top  = y + 'px';
+}
+
+function lerp(a, b, t) { return a + (b - a) * t; }
+
+function spawnHeart(x, y) {
+  const h = document.createElement('div');
+  h.className = 'heart-float';
+  h.textContent = ['🤍','💚','🌿'][Math.floor(Math.random()*3)];
+  h.style.left = (x + (Math.random()*30 - 15)) + 'px';
+  h.style.top  = (y - 10) + 'px';
+  wrap.appendChild(h);
+  setTimeout(() => h.remove(), 1600);
+}
+
+// ── main sequence ──
+map.whenReady(() => {
+  setTimeout(runSequence, 600);
+});
+
+function runSequence() {
+  const cairoPos = latLngToPos(CAIRO);
+  const luxorPos = latLngToPos(LUXOR);
+
+  // ── Step 1: show RORO waiting in Luxor ──
+  placeEl(roroEl,    luxorPos.x, luxorPos.y - 2);
+  placeEl(roroLabel, luxorPos.x, luxorPos.y + 14);
+  roroEl.style.opacity    = '1';
+  roroLabel.style.opacity = '1';
+
+  // ── Step 2: show TFTF at Cairo after 0.8s ──
+  setTimeout(() => {
+    placeEl(tftfEl,    cairoPos.x, cairoPos.y - 2);
+    placeEl(tftfLabel, cairoPos.x, cairoPos.y + 14);
+    tftfEl.style.opacity    = '1';
+    tftfLabel.style.opacity = '1';
+
+    // ── Step 3: animate TFTF walking toward Luxor ──
+    setTimeout(() => {
+      const duration   = 4000; // 4s journey
+      const steps      = 80;
+      const interval   = duration / steps;
+      let step = 0;
+
+      // build route points list
+      const routePoints = [];
+      for (let i = 0; i <= steps; i++) {
+        const t  = i / steps;
+        const lat = lerp(CAIRO[0], LUXOR[0], t);
+        const lng = lerp(CAIRO[1], LUXOR[1], t);
+        routePoints.push([lat, lng]);
+      }
+
+      const march = setInterval(() => {
+        step++;
+        if (step > steps) { clearInterval(march); arrive(); return; }
+
+        const t   = step / steps;
+        const pos = latLngToPos(routePoints[step]);
+
+        // move TFTF
+        placeEl(tftfEl,    pos.x, pos.y - 2);
+        placeEl(tftfLabel, pos.x, pos.y + 14);
+
+        // draw route behind him
+        routeLine.setLatLngs(routePoints.slice(0, step + 1));
+
+        // animate dash offset for marching ants
+        routeLine.setStyle({ dashOffset: (-step * 2).toString() });
+
+      }, interval);
+
+    }, 600);
+  }, 900);
+
+  // ── Step 4: arrive at Luxor — CELEBRATE ──
+  function arrive() {
+    // stop walking animation, switch to jumping
+    tftfEl.querySelector('.tftf-svg').style.animation = 'none';
+    ['leg-l','leg-r','arm-l','arm-r'].forEach(cls => {
+      tftfEl.querySelector('.'+cls).style.animation = 'none';
+    });
+
+    // both jump
+    tftfEl.classList.add('celebrating');
+    roroEl.classList.add('celebrating');
+
+    // hide labels, show celebration text
+    tftfLabel.style.opacity = '0';
+    roroLabel.style.opacity = '0';
+
+    const celebPos = latLngToPos(LUXOR);
+
+    const celebText = document.createElement('div');
+    celebText.className = 'celeb-text';
+    celebText.textContent = '🎉 Together at last!';
+    celebText.style.left = (celebPos.x - 60) + 'px';
+    celebText.style.top  = (celebPos.y - 70) + 'px';
+    wrap.appendChild(celebText);
+
+    // Burst of hearts
+    const heartBurst = setInterval(() => {
+      spawnHeart(celebPos.x - 10, celebPos.y - 20);
+      spawnHeart(celebPos.x + 10, celebPos.y - 20);
+    }, 300);
+    setTimeout(() => clearInterval(heartBurst), 4000);
+
+    // Keep jumping for a bit then settle
+    setTimeout(() => {
+      tftfEl.classList.remove('celebrating');
+      roroEl.classList.remove('celebrating');
+    }, 3500);
+  }
+}
+</script>
+</body>
+</html>
