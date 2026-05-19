@@ -319,3 +319,49 @@ button { cursor: pointer; border: none; }
   0%, 100% { transform: translateY(0);   opacity: 0.4; }
   50%       { transform: translateY(4px); opacity: 1; }
 }
+
+/* ══ COUNTDOWN ══ */
+.cd-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.cd-box {
+  background: var(--white);
+  border: 1px solid #d8edd6;
+  border-radius: 14px;
+  padding: 14px 4px 10px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 1px 4px rgba(100,160,95,0.06);
+}
+.cd-box.flip { animation: flip 0.3s ease; }
+@keyframes flip {
+  0%   { transform: scaleY(1); }
+  40%  { transform: scaleY(0.82); }
+  100% { transform: scaleY(1); }
+}
+.cd-num {
+  font-family: var(--font-body);
+  font-size: 36px;
+  font-weight: 300;
+  color: var(--sage);
+  line-height: 1;
+}
+.cd-lbl {
+  font-family: var(--font-label);
+  font-size: 6px;
+  letter-spacing: 2px;
+  color: var(--text-mid);
+  text-transform: uppercase;
+}
+.cd-cap {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-style: italic;
+  color: var(--text-mid);
+  text-align: center;
+}
