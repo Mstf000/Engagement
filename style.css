@@ -740,9 +740,24 @@ button { cursor: pointer; border: none; }
 }
 .rsvp-arena {
   position: relative;
-  height: 160px;
+  height: 300px;
   width: 100%;
 }
+.rsvp-taunt {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-style: italic;
+  color: var(--sage-mid);
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+.rsvp-taunt.show { opacity: 1; }
 .rsvp-yes, .rsvp-no {
   position: absolute;
   border-radius: 50px;
@@ -752,7 +767,7 @@ button { cursor: pointer; border: none; }
   text-transform: uppercase;
   padding: 14px 28px;
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: left 0.25s cubic-bezier(0.34,1.56,0.64,1), top 0.25s cubic-bezier(0.34,1.56,0.64,1), transform 0.2s ease;
   border: none;
 }
 .rsvp-yes {
@@ -770,7 +785,7 @@ button { cursor: pointer; border: none; }
   border: 1px solid #d8edd6;
   box-shadow: 0 2px 10px rgba(0,0,0,0.06);
   left: 50%;
-  top: 90px;
+  top: 120px;
   transform: translateX(-50%);
 }
 

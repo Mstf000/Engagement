@@ -255,36 +255,56 @@ function initRSVP() {
   const noState  = document.getElementById('rsvpNoState');
   if (!yesBtn || !noBtn) return;
 
+  const taunt  = document.getElementById('rsvpTaunt');
   let dodges = 0;
   const MAX_DODGES = 4;
 
-  function randomPos() {
+  const taunts = [
+    'nice try 😏',
+    'not fast enough 😄',
+    'you sure about that? 👀',
+    'last chance... 🥺',
+  ];
+
+  // 4 corners of the arena — guarantees big jumps on any screen size
+  function cornerPos(index) {
     const aw = arena.offsetWidth;
     const ah = arena.offsetHeight;
-    const bw = noBtn.offsetWidth;
-    const bh = noBtn.offsetHeight;
-    const x = Math.random() * (aw - bw);
-    const y = Math.random() * (ah - bh);
-    return { x, y };
+    const bw = noBtn.offsetWidth  || 140;
+    const bh = noBtn.offsetHeight || 48;
+    const pad = 10;
+    const corners = [
+      { x: pad,          y: pad },
+      { x: aw - bw - pad, y: pad },
+      { x: pad,          y: ah - bh - pad },
+      { x: aw - bw - pad, y: ah - bh - pad },
+    ];
+    return corners[index % corners.length];
   }
 
   noBtn.addEventListener('click', () => {
+    if (dodges >= MAX_DODGES) return;
     dodges++;
+
     if (dodges >= MAX_DODGES) {
-      // Give up — show sad state
       q.style.display = 'none';
       noState.style.display = 'block';
       return;
     }
-    // Jump to a new random spot
-    const { x, y } = randomPos();
-    noBtn.style.transition = 'left 0.2s ease, top 0.2s ease, transform 0.2s ease';
-    noBtn.style.left      = x + 'px';
-    noBtn.style.top       = y + 'px';
-    noBtn.style.transform = 'none';
 
-    // Shrink yes button slightly each dodge as a fun touch
-    yesBtn.style.transform = `translateX(-50%) scale(${1 + dodges * 0.06})`;
+    // Jump to the next corner
+    const { x, y } = cornerPos(dodges);
+    noBtn.style.transform = 'none';
+    noBtn.style.left = x + 'px';
+    noBtn.style.top  = y + 'px';
+
+    // Show taunt
+    taunt.textContent = taunts[dodges - 1];
+    taunt.classList.add('show');
+    setTimeout(() => taunt.classList.remove('show'), 1200);
+
+    // YES button grows with each dodge
+    yesBtn.style.transform = `translateX(-50%) scale(${1 + dodges * 0.07})`;
   });
 
   yesBtn.addEventListener('click', () => {
