@@ -13,7 +13,69 @@
 </head>
 <body>
 
-  <!-- sections added in later tasks -->
+<!-- ══ HERO ══ -->
+<section class="hero" aria-label="Engagement announcement">
+
+  <!-- Floating botanical leaves (decorative) -->
+  <div class="leaves" aria-hidden="true">
+    <span class="leaf" style="left:6%;  --dur:10s; --delay:0s;   --r0:-15deg; --r1:8deg">🌿</span>
+    <span class="leaf" style="left:20%; --dur:13s; --delay:3s;   --r0:12deg;  --r1:-6deg">🍃</span>
+    <span class="leaf" style="left:68%; --dur:11s; --delay:1.5s; --r0:-8deg;  --r1:14deg">🌿</span>
+    <span class="leaf" style="left:84%; --dur:9s;  --delay:4s;   --r0:6deg;   --r1:-18deg">🍃</span>
+    <span class="leaf" style="left:48%; --dur:14s; --delay:6s;   --r0:-18deg; --r1:4deg">🌿</span>
+  </div>
+
+  <!-- Split photos -->
+  <div class="split" aria-hidden="true">
+    <div class="half left">
+      <img
+        src="https://images.unsplash.com/photo-1572252009286-96b070b6e90b?auto=format&fit=crop&w=400&h=380&q=85"
+        alt="Cairo cityscape"
+        loading="eager"
+      />
+      <span class="city-tag">CAIRO</span>
+    </div>
+    <div class="half right">
+      <img
+        src="https://images.unsplash.com/photo-1539650116574-75c0c6d73f6e?auto=format&fit=crop&w=400&h=380&q=85"
+        alt="Luxor temple"
+        loading="eager"
+      />
+      <span class="city-tag">LUXOR</span>
+    </div>
+    <div class="seam" aria-hidden="true">
+      <div class="seam-dot"></div>
+    </div>
+  </div>
+
+  <!-- Names + date -->
+  <div class="hero-body">
+    <span class="eyebrow">ENGAGEMENT</span>
+    <div class="names">
+      <span class="name n1">TFTF</span>
+      <div class="amp-row" aria-hidden="true">
+        <div class="amp-line l"></div>
+        <span class="amp">&amp;</span>
+        <div class="amp-line r"></div>
+      </div>
+      <span class="name n2">RORO</span>
+    </div>
+    <div class="date-row">
+      <span class="date-text">3 · JULY · 2026</span>
+      <div class="rule"></div>
+      <span class="loc-text">LUXOR</span>
+    </div>
+  </div>
+
+  <!-- Scroll cue -->
+  <div class="scroll-cue" aria-hidden="true">
+    <span>SCROLL</span>
+    <span class="chev">▾</span>
+  </div>
+
+</section>
+
+<!-- other sections will be added here in later tasks -->
 
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="main.js"></script>
