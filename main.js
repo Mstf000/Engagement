@@ -154,7 +154,7 @@ function initMap() {
   function lerp(a, b, t) { return a + (b - a) * t; }
 
   function spawnHeart(x, y) {
-    const icons = ['🤍', '💚', '🌿', '💛'];
+    const icons = ['🎆', '🎇', '✨', '💥', '🌟', '⭐', '💫', '🎉'];
     const h = document.createElement('div');
     h.className = 'heart-pop';
     h.textContent = icons[Math.floor(Math.random() * icons.length)];
@@ -225,18 +225,11 @@ function initMap() {
     tftfEl.classList.add('celebrating');
     roroEl.classList.add('celebrating');
 
-    // Celebration bubble
-    const bubble = document.createElement('div');
-    bubble.className = 'celeb-bubble';
-    bubble.textContent = '🎉 Together at last!';
-    bubble.style.cssText = `left:${lx - 72}px;top:${ly - 88}px`;
-    wrap.appendChild(bubble);
-
-    // Hearts burst
+    // Fireworks burst — varied positions and icons
     const burst = setInterval(() => {
-      spawnHeart(lx - 20, ly - 30);
-      spawnHeart(lx + 12, ly - 30);
-    }, 280);
+      spawnHeart(lx + (Math.random() * 80 - 40), ly - (Math.random() * 40 + 10));
+      spawnHeart(lx + (Math.random() * 80 - 40), ly - (Math.random() * 40 + 10));
+    }, 180);
     setTimeout(() => {
       clearInterval(burst);
       tftfEl.classList.remove('celebrating');
