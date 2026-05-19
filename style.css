@@ -201,23 +201,24 @@ button { cursor: pointer; border: none; }
   line-height: 1;
 }
 .date-row {
-  margin-top: 14px;
+  margin-top: 18px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5px;
+  gap: 8px;
 }
 .date-text {
-  font-family: var(--font-label);
-  font-size: 8px;
-  letter-spacing: 4px;
-  color: var(--text-mid);
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-style: italic;
+  letter-spacing: 2px;
+  color: var(--text);
 }
-.rule { width: 32px; height: 1px; background: var(--sage-mid); }
+.rule { width: 48px; height: 1px; background: var(--sage-mid); }
 .loc-text {
   font-family: var(--font-label);
-  font-size: 8px;
-  letter-spacing: 5px;
+  font-size: 11px;
+  letter-spacing: 6px;
   color: var(--sage);
 }
 
