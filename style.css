@@ -411,3 +411,231 @@ button { cursor: pointer; border: none; }
   color: var(--text-mid);
   font-style: italic;
 }
+
+/* ══ MAP SECTION ══ */
+.map-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.map-wrap {
+  width: 100%;
+  height: 300px;
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid #daeeda;
+  position: relative;
+  margin-bottom: 0;
+}
+#map {
+  width: 100%;
+  height: 100%;
+}
+
+/* Hide Leaflet UI chrome */
+.leaflet-control-attribution,
+.leaflet-control-zoom { display: none !important; }
+
+/* Distance badge */
+.dist-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--sage-bg);
+  border: 1px solid #d0e8ce;
+  border-radius: 20px;
+  padding: 10px 20px;
+  margin-top: 14px;
+  align-self: center;
+}
+.dist-num {
+  font-family: var(--font-body);
+  font-size: 32px;
+  font-weight: 300;
+  color: var(--sage);
+  line-height: 1;
+}
+.dist-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.dist-unit, .dist-heart {
+  font-family: var(--font-label);
+  font-size: 7px;
+  letter-spacing: 2px;
+  color: var(--text-mid);
+  text-transform: uppercase;
+}
+.dist-sep {
+  width: 24px;
+  height: 1px;
+  background: #c8e2c6;
+}
+.map-cap {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-style: italic;
+  color: var(--text-mid);
+  line-height: 1.75;
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* ── Avatar badges (positioned by JS over the map) ── */
+.avatar {
+  position: absolute;
+  pointer-events: none;
+  z-index: 500;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  transform: translate(-50%, -100%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+}
+.avatar.visible { opacity: 1; }
+
+.avatar-ring {
+  width: 38px; height: 38px;
+  border-radius: 50%;
+  border: 3px solid var(--white);
+  box-shadow: 0 2px 12px rgba(0,0,0,0.18);
+  overflow: hidden;
+  background: var(--sage-pale);
+  flex-shrink: 0;
+}
+.avatar-ring img {
+  width: 100%; height: 100%;
+  object-fit: cover; display: block;
+}
+.avatar-initial {
+  width: 100%; height: 100%;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-display);
+  font-style: italic; font-size: 15px;
+  color: var(--sage);
+}
+
+/* TFTF — dark border */
+.avatar.tftf .avatar-ring {
+  border-color: #2D4A2B;
+  box-shadow: 0 2px 12px rgba(45,74,43,0.3);
+}
+/* RORO — sage border */
+.avatar.roro .avatar-ring {
+  border-color: var(--sage);
+  box-shadow: 0 2px 12px rgba(123,158,119,0.3);
+}
+
+.avatar-name {
+  font-family: var(--font-label);
+  font-size: 7px;
+  letter-spacing: 2px;
+  color: var(--text);
+  background: var(--white);
+  padding: 2px 8px;
+  border-radius: 6px;
+  box-shadow: 0 1px 6px rgba(0,0,0,0.1);
+  border: 1px solid #e0eedf;
+  white-space: nowrap;
+}
+
+/* Pointer arrow below avatar pointing to location */
+.avatar::after {
+  content: '';
+  width: 0; height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 6px solid var(--white);
+  filter: drop-shadow(0 1px 1px rgba(0,0,0,0.08));
+}
+
+/* RORO waiting — gentle bob */
+.avatar.roro.waiting .avatar-ring {
+  animation: roroWait 1.2s ease-in-out infinite alternate;
+}
+@keyframes roroWait {
+  from { transform: translateY(0)    rotate(-3deg); }
+  to   { transform: translateY(-3px) rotate(3deg); }
+}
+
+/* TFTF travelling — bounce */
+.avatar.tftf.travelling .avatar-ring {
+  animation: tftfWalk 0.35s ease-in-out infinite alternate;
+}
+@keyframes tftfWalk {
+  from { transform: translateY(0)    rotate(-4deg); }
+  to   { transform: translateY(-4px) rotate(4deg); }
+}
+
+/* Celebration — both jump */
+.avatar.celebrating .avatar-ring {
+  animation: celebrate 0.35s ease-in-out infinite alternate !important;
+}
+@keyframes celebrate {
+  from { transform: translateY(0)     scale(1)   rotate(-5deg); }
+  to   { transform: translateY(-10px) scale(1.1) rotate(5deg); }
+}
+
+/* Celebration bubble */
+.celeb-bubble {
+  position: absolute;
+  z-index: 600;
+  pointer-events: none;
+  background: var(--white);
+  border: 1px solid #d0e8ce;
+  border-radius: 14px;
+  padding: 6px 14px;
+  font-family: var(--font-display);
+  font-size: 13px;
+  font-style: italic;
+  color: var(--text);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+  white-space: nowrap;
+  opacity: 0;
+  animation: popBubble 0.5s cubic-bezier(0.34,1.56,0.64,1) 0.2s forwards;
+}
+@keyframes popBubble {
+  from { opacity: 0; transform: scale(0.6) translateY(8px); }
+  to   { opacity: 1; transform: scale(1)   translateY(0); }
+}
+
+/* Floating hearts/leaves on celebration */
+.heart-pop {
+  position: absolute;
+  z-index: 600;
+  pointer-events: none;
+  font-size: 16px;
+  opacity: 0;
+  animation: heartBurst 1.4s ease-out forwards;
+}
+@keyframes heartBurst {
+  0%   { opacity: 0; transform: translate(0,0) scale(0.5); }
+  15%  { opacity: 1; }
+  100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(1.2); }
+}
+
+/* City pin dots */
+.city-pin-dot {
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--sage);
+  border: 2px solid var(--white);
+  box-shadow: 0 0 0 2px var(--sage-mid);
+  position: relative;
+}
+.city-pin-pulse {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  width: 10px; height: 10px;
+  border-radius: 50%;
+  background: var(--sage);
+  opacity: 0.4;
+  animation: ripple 1.5s ease-out infinite;
+}
+@keyframes ripple {
+  to { transform: translate(-50%,-50%) scale(3); opacity: 0; }
+}
