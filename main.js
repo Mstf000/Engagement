@@ -49,6 +49,27 @@ function initCountdown() {
   setInterval(tick, 1000);
 }
 
+function initScrollReveal() {
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (!entry.isIntersecting) return;
+        entry.target.classList.add('in');
+        observer.unobserve(entry.target);
+
+        // Trigger map sequence when map section scrolls into view
+        if (entry.target.classList.contains('map-section') &&
+            typeof entry.target._runMapSequence === 'function') {
+          entry.target._runMapSequence();
+        }
+      });
+    },
+    { threshold: 0.12 }
+  );
+
+  document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+}
+
 function initMap() {
   const CAIRO = [30.0444, 31.2357];
   const LUXOR = [25.6872, 32.6396];
