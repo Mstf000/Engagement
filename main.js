@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollReveal();
   initCountdown();
   initMap();
+  initRSVP();
 });
 
 function initCountdown() {
@@ -243,4 +244,67 @@ function initMap() {
 
   // Also auto-run once map tiles are ready (fallback for when already in view)
   map.whenReady(() => setTimeout(runSequence, 700));
+}
+
+function initRSVP() {
+  const yesBtn   = document.getElementById('rsvpYes');
+  const noBtn    = document.getElementById('rsvpNo');
+  const arena    = document.getElementById('rsvpArena');
+  const q        = document.getElementById('rsvpQ');
+  const yesState = document.getElementById('rsvpYesState');
+  const noState  = document.getElementById('rsvpNoState');
+  if (!yesBtn || !noBtn) return;
+
+  let dodges = 0;
+  const MAX_DODGES = 4;
+
+  function randomPos() {
+    const aw = arena.offsetWidth;
+    const ah = arena.offsetHeight;
+    const bw = noBtn.offsetWidth;
+    const bh = noBtn.offsetHeight;
+    const x = Math.random() * (aw - bw);
+    const y = Math.random() * (ah - bh);
+    return { x, y };
+  }
+
+  noBtn.addEventListener('click', () => {
+    dodges++;
+    if (dodges >= MAX_DODGES) {
+      // Give up — show sad state
+      q.style.display = 'none';
+      noState.style.display = 'block';
+      return;
+    }
+    // Jump to a new random spot
+    const { x, y } = randomPos();
+    noBtn.style.transition = 'left 0.2s ease, top 0.2s ease, transform 0.2s ease';
+    noBtn.style.left      = x + 'px';
+    noBtn.style.top       = y + 'px';
+    noBtn.style.transform = 'none';
+
+    // Shrink yes button slightly each dodge as a fun touch
+    yesBtn.style.transform = `translateX(-50%) scale(${1 + dodges * 0.06})`;
+  });
+
+  yesBtn.addEventListener('click', () => {
+    q.style.display = 'none';
+    yesState.style.display = 'block';
+    // Spawn a little heart burst in the section
+    const section = yesBtn.closest('.rsvp-section');
+    for (let i = 0; i < 8; i++) {
+      setTimeout(() => {
+        const h = document.createElement('div');
+        h.className = 'heart-pop';
+        const icons = ['🎉','💚','🌿','✨','🎊','💫'];
+        h.textContent = icons[Math.floor(Math.random() * icons.length)];
+        const tx = (Math.random() * 120 - 60) + 'px';
+        const ty = (-(Math.random() * 80 + 20)) + 'px';
+        h.style.cssText = `left:50%;top:50%;--tx:${tx};--ty:${ty};position:absolute;z-index:10`;
+        section.style.position = 'relative';
+        section.appendChild(h);
+        setTimeout(() => h.remove(), 1500);
+      }, i * 80);
+    }
+  });
 }

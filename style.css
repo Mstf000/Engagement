@@ -724,3 +724,73 @@ button { cursor: pointer; border: none; }
   color: var(--sage);
   text-transform: uppercase;
 }
+
+/* ══ RSVP ══ */
+.rsvp-section {
+  text-align: center;
+  padding: 40px 24px 48px;
+}
+.rsvp-text {
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-style: italic;
+  color: var(--text);
+  line-height: 1.4;
+  margin-bottom: 32px;
+}
+.rsvp-arena {
+  position: relative;
+  height: 160px;
+  width: 100%;
+}
+.rsvp-yes, .rsvp-no {
+  position: absolute;
+  border-radius: 50px;
+  font-family: var(--font-label);
+  font-size: 11px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  padding: 14px 28px;
+  cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  border: none;
+}
+.rsvp-yes {
+  background: var(--sage);
+  color: var(--white);
+  box-shadow: 0 4px 18px rgba(123,158,119,0.35);
+  left: 50%;
+  top: 20px;
+  transform: translateX(-50%);
+}
+.rsvp-yes:active { transform: translateX(-50%) scale(0.96); }
+.rsvp-no {
+  background: var(--white);
+  color: var(--text-mid);
+  border: 1px solid #d8edd6;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  left: 50%;
+  top: 90px;
+  transform: translateX(-50%);
+}
+
+/* Result states */
+.rsvp-result-icon {
+  font-size: 52px;
+  margin-bottom: 14px;
+  animation: popIn 0.5s cubic-bezier(0.34,1.56,0.64,1) both;
+}
+.rsvp-result-text {
+  font-family: var(--font-display);
+  font-size: 24px;
+  font-style: italic;
+  color: var(--text);
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+.rsvp-result-sub {
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-style: italic;
+  color: var(--text-mid);
+}
