@@ -289,11 +289,10 @@ function initRSVP() {
     if (dodges >= MAX_DODGES) {
       q.style.display = 'none';
       noState.style.display = 'block';
-      const section = noBtn.closest('.rsvp-section');
-      const cryIcons = ['😭','😢','💔','🥺','😿','😩','😫'];
-      spawnEmojiBurst(section, cryIcons, 30, 80);
-      const keepCry = setInterval(() => spawnEmojiBurst(section, cryIcons, 6, 80), 400);
-      setTimeout(() => clearInterval(keepCry), 2000);
+      const cryIcons = ['😭','😢','💔','🥺','😩','😫'];
+      spawnEmojiBurst(cryIcons, 40);
+      const keepCry = setInterval(() => spawnEmojiBurst(cryIcons, 15), 350);
+      setTimeout(() => clearInterval(keepCry), 2500);
       return;
     }
 
@@ -312,33 +311,38 @@ function initRSVP() {
     yesBtn.style.transform = `translateX(-50%) scale(${1 + dodges * 0.07})`;
   });
 
-  function spawnEmojiBurst(section, icons, count, spread) {
-    section.style.position = 'relative';
+  function spawnEmojiBurst(icons, count) {
     for (let i = 0; i < count; i++) {
       setTimeout(() => {
         const h = document.createElement('div');
-        h.className = 'heart-pop';
         h.textContent = icons[Math.floor(Math.random() * icons.length)];
-        const tx = (Math.random() * spread * 2 - spread) + 'px';
-        const ty = (-(Math.random() * spread + 10)) + 'px';
-        const lx = 20 + Math.random() * 60;
-        const ly = 20 + Math.random() * 60;
-        h.style.cssText = `left:${lx}%;top:${ly}%;--tx:${tx};--ty:${ty};position:absolute;z-index:10;font-size:${18 + Math.random()*14}px`;
-        section.appendChild(h);
-        setTimeout(() => h.remove(), 1800);
-      }, i * 60);
+        const lx = Math.random() * 100;
+        const ly = Math.random() * 100;
+        const tx = (Math.random() * 100 - 50) + 'px';
+        const ty = (-(Math.random() * 120 + 40)) + 'px';
+        h.style.cssText = `
+          position:fixed;
+          left:${lx}%;top:${ly}%;
+          --tx:${tx};--ty:${ty};
+          font-size:${22 + Math.random() * 20}px;
+          pointer-events:none;
+          z-index:9999;
+          opacity:0;
+          animation:heartBurst 1.8s ease-out forwards;
+        `;
+        document.body.appendChild(h);
+        setTimeout(() => h.remove(), 1900);
+      }, i * 50);
     }
   }
 
   yesBtn.addEventListener('click', () => {
     q.style.display = 'none';
     yesState.style.display = 'block';
-    const section = yesBtn.closest('.rsvp-section');
     const happyIcons = ['🎉','💚','🌿','✨','🎊','💫','🥳','💃','🎆','⭐','🌟','💛'];
-    spawnEmojiBurst(section, happyIcons, 30, 80);
-    // Keep bursting for 2s
-    const keepBurst = setInterval(() => spawnEmojiBurst(section, happyIcons, 8, 80), 400);
-    setTimeout(() => clearInterval(keepBurst), 2000);
+    spawnEmojiBurst(happyIcons, 40);
+    const keepBurst = setInterval(() => spawnEmojiBurst(happyIcons, 15), 350);
+    setTimeout(() => clearInterval(keepBurst), 2500);
   });
 
 }
