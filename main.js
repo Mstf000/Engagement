@@ -408,18 +408,41 @@ function initMusic() {
   const audio = document.getElementById('bgMusic');
   if (!btn || !audio) return;
 
-  btn.addEventListener('click', () => {
+  const START_SEC = 98; // 1:38
+
+  function setPlaying() {
+    btn.classList.add('playing');
+    btn.classList.remove('paused');
+    btn.setAttribute('aria-label', 'Pause music');
+  }
+  function setPaused() {
+    btn.classList.remove('playing');
+    btn.classList.add('paused');
+    btn.setAttribute('aria-label', 'Play music');
+  }
+
+  // Try autoplay immediately
+  audio.currentTime = START_SEC;
+  audio.play().then(setPlaying).catch(() => {
+    // Browser blocked autoplay — play on first touch anywhere
+    const unlock = () => {
+      audio.currentTime = START_SEC;
+      audio.play().then(setPlaying).catch(() => {});
+      document.removeEventListener('touchstart', unlock);
+      document.removeEventListener('click', unlock);
+    };
+    document.addEventListener('touchstart', unlock, { once: true });
+    document.addEventListener('click',      unlock, { once: true });
+  });
+
+  // Toggle on button press
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
     if (audio.paused) {
-      audio.play().then(() => {
-        btn.classList.add('playing');
-        btn.classList.remove('paused');
-        btn.setAttribute('aria-label', 'Pause music');
-      }).catch(() => {});
+      audio.play().then(setPlaying).catch(() => {});
     } else {
       audio.pause();
-      btn.classList.remove('playing');
-      btn.classList.add('paused');
-      btn.setAttribute('aria-label', 'Play music');
+      setPaused();
     }
   });
 }
