@@ -706,6 +706,25 @@ button { cursor: pointer; border: none; }
   color: var(--white);
   line-height: 1;
 }
+.ring-btn {
+  background: none;
+  border: none;
+  font-size: 32px;
+  cursor: pointer;
+  padding: 6px;
+  line-height: 1;
+  animation: ringFloat 3s ease-in-out infinite;
+  -webkit-tap-highlight-color: transparent;
+}
+@keyframes ringFloat {
+  0%,100% { transform: translateY(0) rotate(-8deg); }
+  50%      { transform: translateY(-5px) rotate(8deg); }
+}
+@keyframes confettiFall {
+  0%   { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; }
+  85%  { opacity: 1; }
+  100% { transform: translateY(110vh) translateX(var(--drift)) rotate(var(--rot)); opacity: 0; }
+}
 .cl-tag {
   font-family: var(--font-body);
   font-size: 16px;
