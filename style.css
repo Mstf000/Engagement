@@ -68,7 +68,14 @@ button { cursor: pointer; border: none; }
 /* ══ HERO ══ */
 .hero {
   min-height: 100dvh;
-  background: var(--sage-pale);
+  background:
+    linear-gradient(180deg,
+      rgba(234,245,232,0.28) 0%,
+      rgba(234,245,232,0.22) 38%,
+      rgba(234,245,232,0.65) 68%,
+      rgba(234,245,232,1.00) 100%
+    ),
+    url('public/couple.jpg') center 18% / cover no-repeat;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -166,9 +173,10 @@ button { cursor: pointer; border: none; }
   font-family: var(--font-label);
   font-size: 9px;
   letter-spacing: 8px;
-  color: var(--sage);
+  color: rgba(255,255,255,0.9);
   text-transform: uppercase;
   margin-bottom: 16px;
+  text-shadow: 0 1px 10px rgba(0,0,0,0.25);
 }
 .names { text-align: center; }
 .name {
@@ -177,9 +185,10 @@ button { cursor: pointer; border: none; }
   font-size: 64px;
   font-weight: 300;
   font-style: italic;
-  color: var(--text);
+  color: #ffffff;
   letter-spacing: -1px;
   line-height: 1.05;
+  text-shadow: 0 2px 16px rgba(0,0,0,0.22);
 }
 .amp-row {
   display: flex;
@@ -192,14 +201,15 @@ button { cursor: pointer; border: none; }
   height: 1px;
   width: 36px;
 }
-.amp-line.l { background: linear-gradient(to left,  transparent, var(--sage-mid)); }
-.amp-line.r { background: linear-gradient(to right, transparent, var(--sage-mid)); }
+.amp-line.l { background: linear-gradient(to left,  transparent, rgba(255,255,255,0.6)); }
+.amp-line.r { background: linear-gradient(to right, transparent, rgba(255,255,255,0.6)); }
 .amp {
   font-family: var(--font-display);
   font-size: 34px;
   font-style: italic;
-  color: var(--sage);
+  color: rgba(255,255,255,0.9);
   line-height: 1;
+  text-shadow: 0 2px 12px rgba(0,0,0,0.2);
 }
 .date-row {
   margin-top: 28px;
@@ -213,14 +223,16 @@ button { cursor: pointer; border: none; }
   font-size: 28px;
   font-style: italic;
   letter-spacing: 2px;
-  color: var(--text);
+  color: rgba(255,255,255,0.95);
+  text-shadow: 0 1px 10px rgba(0,0,0,0.2);
 }
-.rule { width: 56px; height: 1px; background: var(--sage-mid); }
+.rule { width: 56px; height: 1px; background: rgba(255,255,255,0.5); }
 .loc-text {
   font-family: var(--font-label);
   font-size: 13px;
   letter-spacing: 8px;
-  color: var(--sage);
+  color: rgba(255,255,255,0.85);
+  text-shadow: 0 1px 8px rgba(0,0,0,0.2);
 }
 
 /* Scroll cue */
@@ -237,10 +249,10 @@ button { cursor: pointer; border: none; }
   font-family: var(--font-label);
   font-size: 6px;
   letter-spacing: 4px;
-  color: var(--sage-mid);
+  color: rgba(255,255,255,0.7);
   margin-bottom: 2px;
 }
-.chev { font-size: 10px; color: var(--sage-mid); }
+.chev { font-size: 10px; color: rgba(255,255,255,0.7); }
 
 /* ══ HERO ANIMATIONS ══ */
 
