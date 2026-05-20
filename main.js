@@ -356,7 +356,7 @@ function initGuestbook() {
   if (!sendBtn) return;
 
   const BOT_TOKEN = '8539391714:AAG49bGlVG0j2RhW1-B1C1xWP6L1DaeHqmo';
-  const CHAT_ID   = '2083678873';
+  const CHAT_ID   = '-5246813287';
 
   sendBtn.addEventListener('click', async () => {
     const name = nameEl.value.trim();
