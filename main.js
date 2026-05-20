@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initRSVP();
   initGuestbook();
   initRingEasterEgg();
+  initMusic();
 });
 
 function initCountdown() {
@@ -400,6 +401,27 @@ function initRSVP() {
     setTimeout(() => clearInterval(keepBurst), 2500);
   });
 
+}
+
+function initMusic() {
+  const btn   = document.getElementById('musicBtn');
+  const audio = document.getElementById('bgMusic');
+  if (!btn || !audio) return;
+
+  btn.addEventListener('click', () => {
+    if (audio.paused) {
+      audio.play().then(() => {
+        btn.classList.add('playing');
+        btn.classList.remove('paused');
+        btn.setAttribute('aria-label', 'Pause music');
+      }).catch(() => {});
+    } else {
+      audio.pause();
+      btn.classList.remove('playing');
+      btn.classList.add('paused');
+      btn.setAttribute('aria-label', 'Play music');
+    }
+  });
 }
 
 function initRingEasterEgg() {
