@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initCountdown();
   initMap();
   initRSVP();
+  initGuestbook();
 });
 
 function initCountdown() {
@@ -345,4 +346,47 @@ function initRSVP() {
     setTimeout(() => clearInterval(keepBurst), 2500);
   });
 
+}
+
+function initGuestbook() {
+  const nameEl   = document.getElementById('gbName');
+  const msgEl    = document.getElementById('gbMsg');
+  const sendBtn  = document.getElementById('gbSend');
+  const statusEl = document.getElementById('gbStatus');
+  if (!sendBtn) return;
+
+  const BOT_TOKEN = '8539391714:AAG49bGlVG0j2RhW1-B1C1xWP6L1DaeHqmo';
+  const CHAT_ID   = '2083678873';
+
+  sendBtn.addEventListener('click', async () => {
+    const name = nameEl.value.trim();
+    const msg  = msgEl.value.trim();
+    if (!name) { statusEl.textContent = 'Please enter your name 🌿'; return; }
+    if (!msg)  { statusEl.textContent = 'Please write a message 💌'; return; }
+
+    sendBtn.disabled = true;
+    statusEl.textContent = 'Sending...';
+
+    const text = `💌 New wish from *${name}*:\n\n${msg}`;
+
+    try {
+      const res = await fetch(`https://api.telegram.org/bot${BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ chat_id: CHAT_ID, text, parse_mode: 'Markdown' }),
+      });
+      const data = await res.json();
+      if (data.ok) {
+        nameEl.value = '';
+        msgEl.value  = '';
+        statusEl.textContent = 'Your wish has been sent 💚 Thank you!';
+        sendBtn.disabled = false;
+      } else {
+        throw new Error(data.description);
+      }
+    } catch (e) {
+      statusEl.textContent = 'Something went wrong, please try again.';
+      sendBtn.disabled = false;
+    }
+  });
 }
