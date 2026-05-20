@@ -155,8 +155,8 @@ button { cursor: pointer; border: none; }
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
-  padding: 0 24px 40px;
+  justify-content: flex-start;
+  padding: 72px 24px 0;
   position: relative;
   z-index: 5;
   gap: 4px;
@@ -242,18 +242,19 @@ button { cursor: pointer; border: none; }
 }
 .chev { font-size: 10px; color: var(--sage-mid); }
 
-/* Couple cut-out — floats at hero bottom */
+/* Couple cut-out — lower half of hero */
 .hero-couple {
   position: absolute;
   bottom: 0;
   left: 50%;
   transform: translateX(-50%);
-  width: 82%;
-  max-width: 340px;
+  height: 44vh;
+  width: auto;
+  max-width: 100%;
   z-index: 2;
   pointer-events: none;
-  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 28%, black 100%);
-  mask-image: linear-gradient(to bottom, transparent 0%, black 28%, black 100%);
+  -webkit-mask-image: linear-gradient(to bottom, transparent 0%, black 35%, black 100%);
+  mask-image: linear-gradient(to bottom, transparent 0%, black 35%, black 100%);
   opacity: 0;
   animation: fadeUp 1.2s ease 1.4s both;
 }
