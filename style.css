@@ -68,7 +68,13 @@ button { cursor: pointer; border: none; }
 /* ══ HERO ══ */
 .hero {
   min-height: 100dvh;
-  background: var(--sage-pale);
+  background:
+    linear-gradient(180deg,
+      rgba(234,245,232,0.90) 0%,
+      rgba(234,245,232,0.72) 45%,
+      rgba(234,245,232,0.90) 100%
+    ),
+    url('public/couple.jpg') center 20% / cover no-repeat;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -619,6 +625,7 @@ button { cursor: pointer; border: none; }
   100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(1.2); }
 }
 
+
 /* City pin dots */
 .city-pin-dot {
   width: 10px; height: 10px;
@@ -667,6 +674,18 @@ button { cursor: pointer; border: none; }
   letter-spacing: 4px;
   color: var(--sage);
   text-transform: uppercase;
+}
+
+/* ── Typing cursor ── */
+.type-cursor {
+  display: inline-block;
+  color: var(--sage);
+  font-style: normal;
+  animation: cursorBlink 0.6s step-end infinite;
+}
+@keyframes cursorBlink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0; }
 }
 
 /* ══ CLOSING ══ */

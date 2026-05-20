@@ -3,6 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initScrollReveal();
   initCountdown();
   initMap();
+  initTyping();
   initRSVP();
   initGuestbook();
 });
@@ -63,6 +64,12 @@ function initScrollReveal() {
         if (entry.target.classList.contains('map-section') &&
             typeof entry.target._runMapSequence === 'function') {
           entry.target._runMapSequence();
+        }
+
+        // Trigger typing effect when message section scrolls into view
+        if (entry.target.classList.contains('message') &&
+            typeof entry.target._runTyping === 'function') {
+          entry.target._runTyping();
         }
       });
     },
@@ -239,12 +246,58 @@ function initMap() {
     }, 4000);
   }
 
-  // Attach sequence to section element so IntersectionObserver (Task 9) can trigger it
+  // Attach sequence to section element so IntersectionObserver can trigger it
   const mapSection = document.querySelector('.map-section');
   if (mapSection) mapSection._runMapSequence = runSequence;
 
   // Also auto-run once map tiles are ready (fallback for when already in view)
   map.whenReady(() => setTimeout(runSequence, 700));
+}
+
+function initTyping() {
+  const msgEl = document.querySelector('.msg-text');
+  if (!msgEl) return;
+
+  const lines = [
+    'Every path somehow led to this moment.',
+    'Come celebrate with us as we begin our forever.',
+  ];
+
+  // Replace content with empty spans we'll fill character by character
+  msgEl.innerHTML = lines.map((_, i) =>
+    `<span class="type-line" id="type-line-${i}"></span>`
+  ).join('<br>');
+
+  const CHAR_DELAY = 45;
+  const LINE_PAUSE = 500;
+
+  function typeLine(lineIndex, done) {
+    const el = document.getElementById(`type-line-${lineIndex}`);
+    const text = lines[lineIndex];
+    let i = 0;
+    el.innerHTML = '<span class="type-cursor">|</span>';
+
+    const iv = setInterval(() => {
+      el.innerHTML = text.slice(0, i) + '<span class="type-cursor">|</span>';
+      i++;
+      if (i > text.length) {
+        clearInterval(iv);
+        el.innerHTML = text;
+        done();
+      }
+    }, CHAR_DELAY);
+  }
+
+  function runTyping() {
+    typeLine(0, () => {
+      setTimeout(() => {
+        typeLine(1, () => {});
+      }, LINE_PAUSE);
+    });
+  }
+
+  const section = document.querySelector('.message');
+  if (section) section._runTyping = runTyping;
 }
 
 function initRSVP() {
