@@ -68,13 +68,7 @@ button { cursor: pointer; border: none; }
 /* ══ HERO ══ */
 .hero {
   min-height: 100dvh;
-  background:
-    linear-gradient(180deg,
-      rgba(234,245,232,0.90) 0%,
-      rgba(234,245,232,0.72) 45%,
-      rgba(234,245,232,0.90) 100%
-    ),
-    url('public/couple.jpg') center 20% / cover no-repeat;
+  background: var(--sage-pale);
   display: flex;
   flex-direction: column;
   position: relative;
