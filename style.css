@@ -1063,6 +1063,77 @@ html {
   to   { transform: translateY(0)    rotate(-10deg) scale(1); }
 }
 
+/* ══════════════════════════════════════════════
+   BRIDE & GROOM CHARACTERS (at the destination)
+   ══════════════════════════════════════════════ */
+.avatar.tftf-char,
+.avatar.roro-bride { transform: translate(-50%, -100%); }
+.avatar.tftf-char::after,
+.avatar.roro-bride::after { display: none; }
+
+.char-svg { display: block; overflow: visible; }
+
+/* Bride waiting — gentle bob */
+.avatar.roro-bride.waiting .char-svg {
+  animation: brideWait 1.6s ease-in-out infinite alternate;
+  transform-origin: center bottom;
+}
+@keyframes brideWait {
+  from { transform: translateY(0) rotate(-1deg); }
+  to   { transform: translateY(-2px) rotate(1deg); }
+}
+
+/* Veil gently flutters */
+.bride-svg path[fill="url(#veilGrad)"] {
+  transform-box: fill-box;
+  transform-origin: top center;
+  animation: veilFlutter 2.4s ease-in-out infinite alternate;
+}
+@keyframes veilFlutter {
+  from { transform: skewX(-2deg) rotate(-1deg); }
+  to   { transform: skewX(2deg)  rotate(1deg); }
+}
+
+/* Floating heart by the bride pulses */
+.bride-heart {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: brideHeart 1.2s ease-in-out infinite;
+}
+@keyframes brideHeart {
+  0%, 100% { transform: translateY(0) scale(1);    opacity: 0.85; }
+  50%      { transform: translateY(-2px) scale(1.2); opacity: 1; }
+}
+
+/* DANCE — groom and bride sway in mirrored sync */
+.avatar.tftf-char.dancing .char-svg {
+  animation: groomDance 0.55s ease-in-out infinite alternate;
+  transform-origin: center bottom;
+}
+.avatar.roro-bride.dancing .char-svg {
+  animation: brideDance 0.55s ease-in-out infinite alternate;
+  transform-origin: center bottom;
+}
+@keyframes groomDance {
+  from { transform: translateY(0)    rotate(-4deg); }
+  to   { transform: translateY(-6px) rotate(4deg); }
+}
+@keyframes brideDance {
+  from { transform: translateY(-6px) rotate(4deg); }
+  to   { transform: translateY(0)    rotate(-4deg); }
+}
+
+/* Groom's bouquet swings as he dances */
+.avatar.tftf-char.dancing .char-bouquet {
+  transform-box: fill-box;
+  transform-origin: center bottom;
+  animation: charBouquetSwing 0.55s ease-in-out infinite alternate;
+}
+@keyframes charBouquetSwing {
+  from { transform: rotate(-12deg) translateY(0); }
+  to   { transform: rotate(14deg)  translateY(-2px); }
+}
+
 /* Celebration — both jump */
 .avatar.celebrating .avatar-ring {
   animation: celebrate 0.35s ease-in-out infinite alternate !important;

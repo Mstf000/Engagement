@@ -368,11 +368,138 @@ function initMap() {
     <div class="avatar-name">TFTF</div>`;
   wrap.appendChild(tftfEl);
 
-  const roroEl = makeAvatar('roro', 'N', 'public/roro.jpg');
+  // TFTF — modern groom character (steps out of car at Luxor)
+  const tftfDancer = document.createElement('div');
+  tftfDancer.className = 'avatar tftf-char';
+  tftfDancer.innerHTML = `
+    <svg class="char-svg groom-svg" viewBox="0 0 44 60" width="42" height="58" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="suitGrad2" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#2A3340"/><stop offset="100%" stop-color="#11161D"/>
+        </linearGradient>
+      </defs>
+      <ellipse cx="22" cy="57" rx="11" ry="1.6" fill="#000" opacity="0.18"/>
+      <path d="M16 38 L15 56 L19 56 L20.5 38 Z" fill="#161B22"/>
+      <path d="M23.5 38 L25 56 L29 56 L28 38 Z" fill="#161B22"/>
+      <path d="M14 56 Q14 58 17 58 L20 58 L19.5 56 L15 56 Z" fill="#0E1218"/>
+      <path d="M25 56 Q25 58 28 58 L31 58 L29.5 56 L25 56 Z" fill="#0E1218"/>
+      <path d="M13 22 Q22 19 31 22 L33 40 L11 40 Z" fill="url(#suitGrad2)"/>
+      <path d="M19 22 L22 30 L25 22 Z" fill="#F5F5F0"/>
+      <path d="M18.5 22 L22 24 L18.5 26 Z" fill="#C81D25" stroke="#5A0008" stroke-width="0.4"/>
+      <path d="M25.5 22 L22 24 L25.5 26 Z" fill="#C81D25" stroke="#5A0008" stroke-width="0.4"/>
+      <rect x="21.2" y="23.2" width="1.6" height="1.6" rx="0.3" fill="#8B0010"/>
+      <circle cx="15" cy="26" r="1.2" fill="#E63946" stroke="#5A0008" stroke-width="0.3"/>
+      <path d="M13 23 L10 36 L11.5 36.6 L14.5 24 Z" fill="url(#suitGrad2)"/>
+      <circle cx="11" cy="37" r="1.6" fill="#E5B98A"/>
+      <path d="M31 23 L37 27 L36 28.5 L29.5 24.5 Z" fill="url(#suitGrad2)"/>
+      <circle cx="38" cy="28" r="1.6" fill="#E5B98A"/>
+      <rect x="20" y="18" width="4" height="3" fill="#E5B98A"/>
+      <ellipse cx="22" cy="13" rx="5.4" ry="6.2" fill="#EBC198" stroke="#A77E54" stroke-width="0.4"/>
+      <path d="M16.5 9 Q18 5 22 5 Q26 5 27.5 9 Q28 11 27 11.5 Q26 9 22 8.5 Q18 9 17 11.5 Q16 11 16.5 9 Z" fill="#1F1A14"/>
+      <path d="M18 14.5 Q22 17.4 26 14.5 Q25 16.8 22 17.4 Q19 16.8 18 14.5 Z" fill="#1F1A14" opacity="0.85"/>
+      <path d="M18.2 10.6 Q19.8 9.6 21.2 10.4" stroke="#1F1A14" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+      <path d="M22.8 10.4 Q24.4 9.6 25.8 10.6" stroke="#1F1A14" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+      <ellipse cx="19.8" cy="12.4" rx="0.6" ry="0.5" fill="#1F1A14"/>
+      <ellipse cx="24.2" cy="12.4" rx="0.6" ry="0.5" fill="#1F1A14"/>
+      <path d="M20 14.6 Q22 16 24 14.6" stroke="#1F1A14" stroke-width="0.6" fill="none" stroke-linecap="round"/>
+      <ellipse cx="17.4" cy="14.6" rx="1.1" ry="0.6" fill="#E89B8B" opacity="0.55"/>
+      <ellipse cx="26.6" cy="14.6" rx="1.1" ry="0.6" fill="#E89B8B" opacity="0.55"/>
+      <g class="char-bouquet" transform="translate(38 26)">
+        <ellipse cx="-3" cy="-1" rx="2.4" ry="1" fill="#3F6B2B" transform="rotate(-30 -3 -1)"/>
+        <ellipse cx="3"  cy="-1" rx="2.4" ry="1" fill="#4D8033" transform="rotate(30 3 -1)"/>
+        <circle cx="-2.5" cy="-1" r="2.2" fill="#7A0A1A" stroke="#3A0008" stroke-width="0.4"/>
+        <circle cx="2.5"  cy="-1" r="2.2" fill="#8B0010" stroke="#3A0008" stroke-width="0.4"/>
+        <circle cx="0"    cy="1.5" r="2.6" fill="#B71C2B" stroke="#3A0008" stroke-width="0.4"/>
+        <circle cx="-2.5" cy="-1" r="0.5" fill="#3A0008"/>
+        <circle cx="2.5"  cy="-1" r="0.5" fill="#3A0008"/>
+        <circle cx="0"    cy="1.5" r="0.6" fill="#3A0008"/>
+        <path d="M-3 4 L3 4 L2 7 L-2 7 Z" fill="#F8EFE0" stroke="#A07A55" stroke-width="0.4"/>
+        <path d="M-2.5 5.6 Q0 6.4 2.5 5.6 L2.5 6.4 Q0 7.2 -2.5 6.4 Z" fill="#9D1B2C"/>
+      </g>
+    </svg>
+    <div class="avatar-name">TFTF</div>`;
+  wrap.appendChild(tftfDancer);
 
-  // TFTF photo avatar (appears when stepping out of the car)
-  const tftfDancer = makeAvatar('tftf', 'M', 'public/tftf.jpg');
-  tftfDancer.classList.add('tftf-photo');
+  // RORO — bride character (replaces the photo avatar when groom arrives)
+  const roroBride = document.createElement('div');
+  roroBride.className = 'avatar roro-bride';
+  roroBride.innerHTML = `
+    <svg class="char-svg bride-svg" viewBox="0 0 44 60" width="42" height="58" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="dressGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#FFFFFF"/>
+          <stop offset="100%" stop-color="#F0E7DA"/>
+        </linearGradient>
+        <linearGradient id="veilGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.85"/>
+          <stop offset="100%" stop-color="#FFFFFF" stop-opacity="0.1"/>
+        </linearGradient>
+      </defs>
+      <ellipse cx="22" cy="57" rx="13" ry="1.8" fill="#000" opacity="0.18"/>
+      <!-- flowing wedding dress (A-line silhouette) -->
+      <path d="M16 28 Q13 42 9 56 L35 56 Q31 42 28 28 Z" fill="url(#dressGrad)" stroke="#D8C9B5" stroke-width="0.5"/>
+      <!-- dress shimmer -->
+      <path d="M18 30 Q17 42 14 55" stroke="#FFFFFF" stroke-width="0.4" fill="none" opacity="0.7"/>
+      <path d="M26 30 Q27 42 30 55" stroke="#FFFFFF" stroke-width="0.4" fill="none" opacity="0.7"/>
+      <!-- dress waist sash -->
+      <path d="M16 28 Q22 30 28 28 L28 30 Q22 32 16 30 Z" fill="#D8B9A0"/>
+      <circle cx="22" cy="29" r="1" fill="#FFFFFF" stroke="#C9A875" stroke-width="0.4"/>
+      <!-- bodice (sweetheart neckline) -->
+      <path d="M16 21 Q18 19 22 19 Q26 19 28 21 L28 28 L16 28 Z" fill="#FFFFFF" stroke="#D8C9B5" stroke-width="0.5"/>
+      <path d="M18 21 Q22 23 26 21" stroke="#D8C9B5" stroke-width="0.5" fill="none"/>
+      <!-- shoulders / arms (skin) -->
+      <path d="M14 21 L11 32 L13 32.6 L15.5 22 Z" fill="#F0CDA8"/>
+      <circle cx="12" cy="33" r="1.5" fill="#F0CDA8" stroke="#A77E54" stroke-width="0.3"/>
+      <path d="M30 21 L33 32 L31 32.6 L28.5 22 Z" fill="#F0CDA8"/>
+      <circle cx="32" cy="33" r="1.5" fill="#F0CDA8" stroke="#A77E54" stroke-width="0.3"/>
+      <!-- neck -->
+      <rect x="20" y="17" width="4" height="3" fill="#F0CDA8"/>
+      <!-- head -->
+      <ellipse cx="22" cy="12" rx="5.4" ry="6.2" fill="#F4D2AC" stroke="#A77E54" stroke-width="0.4"/>
+      <!-- long hair flowing -->
+      <path d="M16.5 11 Q15 22 17 28 L20 28 Q19 20 18 12 Z" fill="#2B1810"/>
+      <path d="M27.5 11 Q29 22 27 28 L24 28 Q25 20 26 12 Z" fill="#2B1810"/>
+      <!-- top hair / parting -->
+      <path d="M16.5 8 Q17 4 22 4 Q27 4 27.5 8 Q27.5 10 27 11 Q25 8 22 7.8 Q19 8 17 11 Q16.5 10 16.5 8 Z" fill="#2B1810"/>
+      <!-- VEIL (flowing back behind hair) -->
+      <path d="M14 9 Q22 2 30 9 Q34 18 32 36 L28 32 Q30 20 28 12 Q22 7 16 12 Q14 20 16 32 L12 36 Q10 18 14 9 Z" fill="url(#veilGrad)" stroke="#FFFFFF" stroke-width="0.4" opacity="0.85"/>
+      <!-- veil tiara crown -->
+      <path d="M17 6 L18 8 L20 5 L22 8 L24 5 L26 8 L27 6" stroke="#D4AF37" stroke-width="0.7" fill="none" stroke-linecap="round"/>
+      <circle cx="20" cy="5.5" r="0.5" fill="#D4AF37"/>
+      <circle cx="22" cy="5"   r="0.6" fill="#FFFFFF" stroke="#D4AF37" stroke-width="0.3"/>
+      <circle cx="24" cy="5.5" r="0.5" fill="#D4AF37"/>
+      <!-- eyelashes / closed-eye liner curve -->
+      <path d="M19 11.8 Q20 11.4 21 11.8" stroke="#1F1A14" stroke-width="0.6" fill="none" stroke-linecap="round"/>
+      <path d="M23 11.8 Q24 11.4 25 11.8" stroke="#1F1A14" stroke-width="0.6" fill="none" stroke-linecap="round"/>
+      <!-- eyes -->
+      <ellipse cx="20" cy="12.6" rx="0.6" ry="0.5" fill="#1F1A14"/>
+      <ellipse cx="24" cy="12.6" rx="0.6" ry="0.5" fill="#1F1A14"/>
+      <!-- lashes -->
+      <path d="M19.4 12 L19.2 11.5" stroke="#1F1A14" stroke-width="0.4" stroke-linecap="round"/>
+      <path d="M24.6 12 L24.8 11.5" stroke="#1F1A14" stroke-width="0.4" stroke-linecap="round"/>
+      <!-- blush -->
+      <ellipse cx="17.4" cy="14.6" rx="1.3" ry="0.7" fill="#F0A8A0" opacity="0.6"/>
+      <ellipse cx="26.6" cy="14.6" rx="1.3" ry="0.7" fill="#F0A8A0" opacity="0.6"/>
+      <!-- lipstick smile -->
+      <path d="M20 15 Q22 16.4 24 15" stroke="#C44569" stroke-width="0.8" fill="none" stroke-linecap="round"/>
+      <path d="M20.5 15.2 Q22 15.8 23.5 15.2" stroke="#A03050" stroke-width="0.4" fill="#E95F73"/>
+      <!-- earring -->
+      <circle cx="16.5" cy="14" r="0.5" fill="#FFFFFF" stroke="#D4AF37" stroke-width="0.3"/>
+      <circle cx="27.5" cy="14" r="0.5" fill="#FFFFFF" stroke="#D4AF37" stroke-width="0.3"/>
+      <!-- pearl necklace -->
+      <g fill="#FFFFFF" stroke="#D4AF37" stroke-width="0.2">
+        <circle cx="20" cy="20" r="0.4"/>
+        <circle cx="21.3" cy="20.3" r="0.4"/>
+        <circle cx="22.7" cy="20.3" r="0.4"/>
+        <circle cx="24" cy="20" r="0.4"/>
+      </g>
+      <!-- floating heart (waiting for groom) -->
+      <text class="bride-heart" x="38" y="20" font-size="6" fill="#C44569">❤</text>
+    </svg>
+    <div class="avatar-name">RORO</div>`;
+  wrap.appendChild(roroBride);
+
+  /* removed legacy dancer SVG: `
   /* removed legacy dancer SVG: `
     <svg class="dancer-svg" viewBox="0 0 44 60" width="40" height="56" xmlns="http://www.w3.org/2000/svg">
       <defs>
@@ -586,14 +713,14 @@ function initMap() {
 
     // Reset state for re-runs (when scrolled into view again)
     routeLine.setLatLngs([]);
-    [tftfEl, roroEl].forEach(el => {
+    [tftfEl, roroBride].forEach(el => {
       el.classList.remove('visible','waiting','travelling','celebrating');
     });
     wrap.querySelectorAll('.celeb-bubble,.heart-pop').forEach(el => el.remove());
 
     // 1 — RORO appears in Luxor, waiting
-    moveEl(roroEl, luxorX, luxorY - 4);
-    roroEl.classList.add('visible', 'waiting');
+    moveEl(roroBride, luxorX, luxorY - 4);
+    roroBride.classList.add('visible', 'waiting');
 
     // 2 — TFTF appears in Cairo after 1s
     setTimeout(() => {
@@ -629,7 +756,7 @@ function initMap() {
 
   function arrive() {
     tftfEl.classList.remove('travelling');
-    roroEl.classList.remove('waiting');
+    roroBride.classList.remove('waiting');
 
     const [lx, ly] = latLngToXY(LUXOR);
 
@@ -637,12 +764,15 @@ function initMap() {
     moveEl(tftfEl, lx - 50, ly - 4);
     tftfEl.classList.add('parked');
 
-    // TFTF steps out of the car after a short delay
+    // RORO transitions from waiting to dancing in place
+    roroBride.classList.remove('waiting');
+    moveEl(roroBride, lx + 26, ly - 4);
+
+    // TFTF steps out, both dance together
     setTimeout(() => {
-      moveEl(tftfDancer, lx - 22, ly - 4);
-      moveEl(roroEl,      lx + 22, ly - 4);
+      moveEl(tftfDancer, lx - 26, ly - 4);
       tftfDancer.classList.add('visible', 'dancing');
-      roroEl.classList.add('celebrating', 'dancing');
+      roroBride.classList.add('dancing');
     }, 450);
 
     // Fireworks burst — varied positions and icons
@@ -653,7 +783,7 @@ function initMap() {
     setTimeout(() => {
       clearInterval(burst);
       tftfEl.classList.remove('celebrating', 'parked');
-      roroEl.classList.remove('celebrating', 'dancing');
+      roroBride.classList.remove('visible', 'dancing');
       tftfDancer.classList.remove('visible', 'dancing');
       sequenceRunning = false;
     }, 4000);
