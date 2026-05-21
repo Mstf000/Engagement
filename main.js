@@ -6,6 +6,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initTyping();
   initRSVP();
   initGuestbook();
+  initRingEasterEgg();
+  initMusic();
 });
 
 function initCountdown() {
@@ -819,6 +821,89 @@ function initRSVP() {
     setTimeout(() => clearInterval(keepBurst), 2500);
   });
 
+}
+
+function initMusic() {
+  const btn   = document.getElementById('musicBtn');
+  const audio = document.getElementById('bgMusic');
+  if (!btn || !audio) return;
+
+  const START_SEC = 98; // 1:38
+
+  function setPlaying() {
+    btn.classList.add('playing');
+    btn.classList.remove('paused');
+    btn.setAttribute('aria-label', 'Pause music');
+  }
+  function setPaused() {
+    btn.classList.remove('playing');
+    btn.classList.add('paused');
+    btn.setAttribute('aria-label', 'Play music');
+  }
+
+  // Try autoplay immediately
+  audio.currentTime = START_SEC;
+  audio.play().then(setPlaying).catch(() => {
+    // Browser blocked autoplay — play on first touch anywhere
+    const unlock = () => {
+      audio.currentTime = START_SEC;
+      audio.play().then(setPlaying).catch(() => {});
+      document.removeEventListener('touchstart', unlock);
+      document.removeEventListener('click', unlock);
+    };
+    document.addEventListener('touchstart', unlock, { once: true });
+    document.addEventListener('click',      unlock, { once: true });
+  });
+
+  // Toggle on button press
+  btn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    if (audio.paused) {
+      audio.play().then(setPlaying).catch(() => {});
+    } else {
+      audio.pause();
+      setPaused();
+    }
+  });
+}
+
+function initRingEasterEgg() {
+  const btn = document.getElementById('ringBtn');
+  if (!btn) return;
+
+  btn.addEventListener('click', () => {
+    const colors = ['#FFD700','#FFC107','#FFEB3B','#FF8F00','#FFF176','#FFD54F','#FFCA28','#ffffff','#fffde7'];
+    const count  = 200;
+
+    for (let i = 0; i < count; i++) {
+      setTimeout(() => {
+        const el       = document.createElement('div');
+        const size     = 5 + Math.random() * 9;
+        const isCircle = Math.random() > 0.45;
+        const duration = 2.4 + Math.random() * 2;
+        const color    = colors[Math.floor(Math.random() * colors.length)];
+        const drift    = (Math.random() - 0.5) * 220;
+        const rot      = Math.random() * 720 - 360;
+
+        el.style.cssText = `
+          position:fixed;
+          left:${Math.random() * 100}%;
+          top:-16px;
+          width:${size}px;
+          height:${isCircle ? size : size * 0.45}px;
+          background:${color};
+          border-radius:${isCircle ? '50%' : '2px'};
+          z-index:9999;
+          pointer-events:none;
+          --drift:${drift}px;
+          --rot:${rot}deg;
+          animation:confettiFall ${duration}s ease-in forwards;
+        `;
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), duration * 1000 + 100);
+      }, i * 12);
+    }
+  });
 }
 
 function initGuestbook() {

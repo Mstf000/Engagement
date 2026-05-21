@@ -1197,6 +1197,25 @@ html {
   color: var(--white);
   line-height: 1;
 }
+.ring-btn {
+  background: none;
+  border: none;
+  font-size: 32px;
+  cursor: pointer;
+  padding: 6px;
+  line-height: 1;
+  animation: ringFloat 3s ease-in-out infinite;
+  -webkit-tap-highlight-color: transparent;
+}
+@keyframes ringFloat {
+  0%,100% { transform: translateY(0) rotate(-8deg); }
+  50%      { transform: translateY(-5px) rotate(8deg); }
+}
+@keyframes confettiFall {
+  0%   { transform: translateY(0) translateX(0) rotate(0deg); opacity: 1; }
+  85%  { opacity: 1; }
+  100% { transform: translateY(110vh) translateX(var(--drift)) rotate(var(--rot)); opacity: 0; }
+}
 .cl-tag {
   font-family: var(--font-body);
   font-size: 16px;
@@ -1205,6 +1224,43 @@ html {
 }
 
 /* ══ FOOTER ══ */
+/* ══ MUSIC BUTTON ══ */
+.music-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 20px;
+  z-index: 1000;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(123,158,119,0.5);
+  background: rgba(234,245,232,0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  box-shadow: 0 4px 16px rgba(123,158,119,0.2);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.music-btn:active { transform: scale(0.93); }
+.music-icon {
+  font-size: 18px;
+  color: var(--sage);
+  line-height: 1;
+  transition: opacity 0.3s;
+}
+.music-btn.playing .music-icon {
+  animation: musicPulse 1.2s ease-in-out infinite;
+}
+.music-btn.paused .music-icon { opacity: 0.5; }
+@keyframes musicPulse {
+  0%,100% { transform: scale(1);    opacity: 1; }
+  50%      { transform: scale(1.18); opacity: 0.8; }
+}
+
 .site-footer {
   background: var(--sage-pale);
   border-top: 1px solid #d8edd6;
