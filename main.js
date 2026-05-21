@@ -53,6 +53,13 @@ function initCountdown() {
 }
 
 function initScrollReveal() {
+  // Index direct children for CSS stagger (--i)
+  document.querySelectorAll('.reveal').forEach((section) => {
+    Array.from(section.children).forEach((child, i) => {
+      child.style.setProperty('--i', i);
+    });
+  });
+
   const observer = new IntersectionObserver(
     (entries) => {
       entries.forEach((entry) => {
@@ -60,23 +67,102 @@ function initScrollReveal() {
         entry.target.classList.add('in');
         observer.unobserve(entry.target);
 
-        // Trigger map sequence when map section scrolls into view
-        if (entry.target.classList.contains('map-section') &&
-            typeof entry.target._runMapSequence === 'function') {
-          entry.target._runMapSequence();
-        }
-
-        // Trigger typing effect when message section scrolls into view
         if (entry.target.classList.contains('message') &&
             typeof entry.target._runTyping === 'function') {
           entry.target._runTyping();
         }
       });
     },
-    { threshold: 0.12 }
+    {
+      threshold: 0.25,
+      rootMargin: '0px 0px -15% 0px', // fire only when section is meaningfully in view
+    }
   );
 
   document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
+
+  initParallax();
+
+  // Scroll progress bar (rAF-throttled)
+  const bar = document.getElementById('scrollBar');
+  if (bar) {
+    let ticking = false;
+    function updateBar() {
+      const h = document.documentElement;
+      const scrolled = h.scrollTop || document.body.scrollTop;
+      const max = (h.scrollHeight - h.clientHeight) || 1;
+      const pct = Math.min(100, Math.max(0, (scrolled / max) * 100));
+      bar.style.width = pct + '%';
+      ticking = false;
+    }
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        requestAnimationFrame(updateBar);
+        ticking = true;
+      }
+    }, { passive: true });
+    updateBar();
+  }
+}
+
+/* ──────────────────────────────────────────────
+   PARALLAX ENGINE
+   Add data-parallax="0.3" to any element. The
+   number is the depth factor — positive moves
+   slower than scroll (deeper), negative moves
+   opposite (foreground). Add data-parallax-fade
+   to also fade out as it scrolls past viewport.
+   ────────────────────────────────────────────── */
+function initParallax() {
+  if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+  const items = Array.from(document.querySelectorAll('[data-parallax]'))
+    .map(el => ({
+      el,
+      speed: parseFloat(el.dataset.parallax) || 0,
+      fade:  el.hasAttribute('data-parallax-fade'),
+    }));
+  if (!items.length) return;
+
+  const vh = () => window.innerHeight || document.documentElement.clientHeight;
+  let ticking = false;
+
+  function update() {
+    const viewH = vh();
+    items.forEach(({ el, speed, fade }) => {
+      // Don't fight the reveal animation — wait until parent section has revealed
+      const section = el.closest('.reveal');
+      if (section && !section.classList.contains('in')) return;
+      const rect = el.getBoundingClientRect();
+      // Distance of element center from viewport center
+      const center = rect.top + rect.height / 2;
+      const offset = center - viewH / 2;
+      // Only update when reasonably near the viewport (perf)
+      if (rect.bottom < -200 || rect.top > viewH + 200) return;
+
+      const ty = -offset * speed;
+      let opacity = 1;
+      if (fade) {
+        // Fade out as element leaves the top of the viewport
+        const past = Math.max(0, -rect.top);
+        opacity = Math.max(0, 1 - past / (rect.height * 0.85));
+      }
+      el.style.transform = `translate3d(0, ${ty.toFixed(2)}px, 0)`;
+      if (fade) el.style.opacity = opacity.toFixed(3);
+    });
+    ticking = false;
+  }
+
+  function onScroll() {
+    if (!ticking) {
+      requestAnimationFrame(update);
+      ticking = true;
+    }
+  }
+
+  window.addEventListener('scroll',  onScroll, { passive: true });
+  window.addEventListener('resize',  onScroll, { passive: true });
+  update();
 }
 
 function initMap() {
@@ -148,8 +234,316 @@ function initMap() {
     return el;
   }
 
-  const tftfEl = makeAvatar('tftf', 'M', 'public/tftf.jpg');
+  // TFTF → funny cartoon car (inline SVG)
+  const tftfEl = document.createElement('div');
+  tftfEl.className = 'avatar tftf car';
+  tftfEl.innerHTML = `
+    <svg class="car-svg" viewBox="-4 -8 80 52" width="80" height="52" xmlns="http://www.w3.org/2000/svg">
+      <!-- antenna with heart -->
+      <line x1="22" y1="6" x2="18" y2="-4" stroke="#2D2D2D" stroke-width="1" stroke-linecap="round"/>
+      <text x="18" y="-3" text-anchor="middle" font-size="6">❤️</text>
+
+      <!-- car body lower -->
+      <rect x="3" y="16" width="58" height="14" rx="5" fill="#E94F4F" stroke="#2D2D2D" stroke-width="1.5"/>
+      <!-- roof (rounded cabin) -->
+      <path d="M14 17 Q18 4 32 4 Q46 4 50 17 Z" fill="#E94F4F" stroke="#2D2D2D" stroke-width="1.5"/>
+
+      <!-- windshield -->
+      <path d="M18 16 Q22 8 30 8 L30 16 Z" fill="#BEE3F8" stroke="#2D2D2D" stroke-width="1"/>
+      <!-- rear window -->
+      <path d="M34 8 Q42 8 46 16 L34 16 Z" fill="#BEE3F8" stroke="#2D2D2D" stroke-width="1"/>
+
+      <!-- driver: head + body, holding bouquet -->
+      <g class="car-driver">
+        <!-- head -->
+        <circle cx="26" cy="11" r="3.2" fill="#F4C9A0" stroke="#2D2D2D" stroke-width="0.8"/>
+        <!-- hair -->
+        <path d="M23 9 Q26 6 29 9" stroke="#3B2A1A" stroke-width="1.4" fill="none" stroke-linecap="round"/>
+        <!-- smile -->
+        <path d="M24.8 11.6 Q26 12.6 27.2 11.6" stroke="#2D2D2D" stroke-width="0.6" fill="none" stroke-linecap="round"/>
+        <!-- eyes -->
+        <circle cx="25" cy="10.6" r="0.4" fill="#2D2D2D"/>
+        <circle cx="27" cy="10.6" r="0.4" fill="#2D2D2D"/>
+        <!-- arm to bouquet -->
+        <line x1="28" y1="13" x2="34" y2="10" stroke="#2D2D2D" stroke-width="1.2" stroke-linecap="round"/>
+
+        <!-- realistic rose bouquet (bigger) -->
+        <g class="car-bouquet">
+          <!-- stems -->
+          <g stroke="#3A5A28" stroke-width="0.7" stroke-linecap="round" fill="none">
+            <line x1="36" y1="8" x2="38" y2="14"/>
+            <line x1="38" y1="6" x2="39" y2="14"/>
+            <line x1="40" y1="7" x2="40" y2="14"/>
+            <line x1="42" y1="8" x2="41" y2="14"/>
+          </g>
+          <!-- leaves layer (behind roses) -->
+          <ellipse cx="33" cy="9"  rx="2.2" ry="1" fill="#4F7A3A" stroke="#2D4A1D" stroke-width="0.4" transform="rotate(-35 33 9)"/>
+          <ellipse cx="44" cy="9"  rx="2.2" ry="1" fill="#5C8C44" stroke="#2D4A1D" stroke-width="0.4" transform="rotate(30 44 9)"/>
+          <ellipse cx="34" cy="12" rx="2"   ry="0.9" fill="#4F7A3A" stroke="#2D4A1D" stroke-width="0.4" transform="rotate(-15 34 12)"/>
+          <ellipse cx="43" cy="12" rx="2"   ry="0.9" fill="#5C8C44" stroke="#2D4A1D" stroke-width="0.4" transform="rotate(15 43 12)"/>
+          <!-- baby's breath dots -->
+          <g fill="#FFFFFF" stroke="#D8D8D8" stroke-width="0.2">
+            <circle cx="32" cy="7" r="0.5"/>
+            <circle cx="45" cy="8" r="0.5"/>
+            <circle cx="34" cy="5" r="0.4"/>
+            <circle cx="43" cy="5" r="0.4"/>
+            <circle cx="39" cy="4" r="0.5"/>
+          </g>
+
+          <!-- roses (with petal layers for realism) -->
+          <!-- rose 1 (top-left) -->
+          <g transform="translate(35 7)">
+            <circle r="2.6" fill="#8B0000" stroke="#3A0008" stroke-width="0.4"/>
+            <path d="M-2 0 Q0 -2 2 0 Q0 2 -2 0 Z" fill="#C81D25"/>
+            <path d="M-1.2 -0.6 Q0 -1.4 1.2 -0.6 Q0 0.8 -1.2 -0.6 Z" fill="#E63946"/>
+            <circle r="0.7" fill="#5A0008"/>
+          </g>
+          <!-- rose 2 (top-right) -->
+          <g transform="translate(41 7)">
+            <circle r="2.6" fill="#9D0208" stroke="#3A0008" stroke-width="0.4"/>
+            <path d="M-2 0 Q0 -2 2 0 Q0 2 -2 0 Z" fill="#D00000"/>
+            <path d="M-1.2 -0.6 Q0 -1.4 1.2 -0.6 Q0 0.8 -1.2 -0.6 Z" fill="#EF233C"/>
+            <circle r="0.7" fill="#5A0008"/>
+          </g>
+          <!-- rose 3 (center, biggest, front) -->
+          <g transform="translate(38 9.5)">
+            <circle r="3" fill="#8B0000" stroke="#3A0008" stroke-width="0.4"/>
+            <path d="M-2.4 0 Q0 -2.4 2.4 0 Q0 2.4 -2.4 0 Z" fill="#C81D25"/>
+            <path d="M-1.5 -0.7 Q0 -1.7 1.5 -0.7 Q0 1 -1.5 -0.7 Z" fill="#E63946"/>
+            <path d="M-0.8 -0.4 Q0 -0.9 0.8 -0.4 Q0 0.5 -0.8 -0.4 Z" fill="#FF6B7A"/>
+            <circle r="0.8" fill="#5A0008"/>
+          </g>
+          <!-- rose 4 (bottom-left small) -->
+          <g transform="translate(34.5 11)">
+            <circle r="2.2" fill="#9D0208" stroke="#3A0008" stroke-width="0.4"/>
+            <path d="M-1.6 0 Q0 -1.6 1.6 0 Q0 1.6 -1.6 0 Z" fill="#D00000"/>
+            <circle r="0.6" fill="#5A0008"/>
+          </g>
+          <!-- rose 5 (bottom-right small) -->
+          <g transform="translate(41.5 11)">
+            <circle r="2.2" fill="#8B0000" stroke="#3A0008" stroke-width="0.4"/>
+            <path d="M-1.6 0 Q0 -1.6 1.6 0 Q0 1.6 -1.6 0 Z" fill="#C81D25"/>
+            <circle r="0.6" fill="#5A0008"/>
+          </g>
+
+          <!-- wrap (paper cone) -->
+          <path d="M33 13 L43 13 L41 17 L35 17 Z" fill="#F4E4D4" stroke="#8B5A3C" stroke-width="0.6"/>
+          <path d="M33 13 L43 13 L42 14 L34 14 Z" fill="#E8D4BF"/>
+          <!-- ribbon -->
+          <path d="M34 15 Q38 16.5 42 15 L42 16 Q38 17.2 34 16 Z" fill="#FF1744" stroke="#8B0000" stroke-width="0.3"/>
+          <path d="M37.5 16 L36 18 L37 18 L38 16.5 Z" fill="#FF1744" stroke="#8B0000" stroke-width="0.3"/>
+          <path d="M38.5 16 L40 18 L39 18 L38 16.5 Z" fill="#FF1744" stroke="#8B0000" stroke-width="0.3"/>
+        </g>
+      </g>
+
+      <!-- big headlight -->
+      <circle cx="58" cy="20" r="2.6" fill="#FFE680" stroke="#2D2D2D" stroke-width="0.8"/>
+      <!-- cheeky front bumper smile -->
+      <path d="M48 27 Q54 30 60 27" stroke="#2D2D2D" stroke-width="1" fill="none" stroke-linecap="round"/>
+      <!-- door line -->
+      <line x1="32" y1="17" x2="32" y2="28" stroke="#2D2D2D" stroke-width="0.8"/>
+      <!-- side stripe -->
+      <rect x="6" y="22" width="52" height="1.5" fill="#FFFFFF" opacity="0.6"/>
+
+      <!-- wheels with cartoon shine -->
+      <g transform="translate(15 30)">
+        <circle r="6.5" fill="#1A1A1A" stroke="#2D2D2D" stroke-width="1"/>
+        <g class="car-spokes">
+          <rect x="-5.5" y="-0.8" width="11" height="1.6" fill="#BBB"/>
+          <rect x="-0.8" y="-5.5" width="1.6" height="11" fill="#BBB"/>
+        </g>
+        <circle cx="-2" cy="-2" r="1" fill="#FFFFFF" opacity="0.4"/>
+      </g>
+      <g transform="translate(49 30)">
+        <circle r="6.5" fill="#1A1A1A" stroke="#2D2D2D" stroke-width="1"/>
+        <g class="car-spokes">
+          <rect x="-5.5" y="-0.8" width="11" height="1.6" fill="#BBB"/>
+          <rect x="-0.8" y="-5.5" width="1.6" height="11" fill="#BBB"/>
+        </g>
+        <circle cx="-2" cy="-2" r="1" fill="#FFFFFF" opacity="0.4"/>
+      </g>
+    </svg>
+    <div class="avatar-name">TFTF</div>`;
+  wrap.appendChild(tftfEl);
+
   const roroEl = makeAvatar('roro', 'N', 'public/roro.jpg');
+
+  // TFTF photo avatar (appears when stepping out of the car)
+  const tftfDancer = makeAvatar('tftf', 'M', 'public/tftf.jpg');
+  tftfDancer.classList.add('tftf-photo');
+  /* removed legacy dancer SVG: `
+    <svg class="dancer-svg" viewBox="0 0 44 60" width="40" height="56" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="suitGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"  stop-color="#2A3340"/>
+          <stop offset="100%" stop-color="#1A222C"/>
+        </linearGradient>
+        <linearGradient id="pantsGrad" x1="0" y1="0" x2="0" y2="1">
+          <stop offset="0%"  stop-color="#222932"/>
+          <stop offset="100%" stop-color="#11161D"/>
+        </linearGradient>
+      </defs>
+
+      <!-- ground shadow -->
+      <ellipse cx="22" cy="57" rx="11" ry="1.6" fill="#000" opacity="0.18"/>
+
+      <!-- floating WOOHOO speech bubble -->
+      <g class="dancer-woo">
+        <ellipse cx="36" cy="3" rx="7" ry="3" fill="#FFFFFF" stroke="#2D4A2B" stroke-width="0.6"/>
+        <path d="M31 5 L29 7 L31.5 5.4 Z" fill="#FFFFFF" stroke="#2D4A2B" stroke-width="0.6"/>
+        <text x="36" y="4.4" text-anchor="middle" font-size="3" font-weight="700" fill="#2D4A2B" font-family="Arial">WOOHOO!</text>
+      </g>
+
+      <!-- LEGS (tailored slim trousers, filled silhouette) -->
+      <g class="dancer-legs">
+        <path d="M16 38 L15 56 L19 56 L20.5 38 Z" fill="url(#pantsGrad)"/>
+        <path d="M23.5 38 L25 56 L29 56 L28 38 Z" fill="url(#pantsGrad)"/>
+        <!-- shoes -->
+        <path d="M14 56 Q14 58 17 58 L20 58 L19.5 56 L15 56 Z" fill="#0E1218"/>
+        <path d="M25 56 Q25 58 28 58 L31 58 L29.5 56 L25 56 Z" fill="#0E1218"/>
+        <!-- shoe shine -->
+        <ellipse cx="17" cy="57" rx="1.5" ry="0.4" fill="#FFFFFF" opacity="0.22"/>
+        <ellipse cx="28" cy="57" rx="1.5" ry="0.4" fill="#FFFFFF" opacity="0.22"/>
+      </g>
+
+      <!-- TORSO: tailored suit jacket silhouette -->
+      <path d="M13 22 Q22 19 31 22 L33 40 L11 40 Z" fill="url(#suitGrad)"/>
+      <!-- shoulders contour highlight -->
+      <path d="M13 22 Q22 20 31 22 Q22 21 13 22 Z" fill="#FFFFFF" opacity="0.06"/>
+
+      <!-- white shirt V -->
+      <path d="M19 22 L22 30 L25 22 Z" fill="#F5F5F0"/>
+      <!-- goofy oversized BOWTIE -->
+      <g class="dancer-bowtie">
+        <path d="M18.5 22 L22 24 L18.5 26 Z" fill="#C81D25" stroke="#5A0008" stroke-width="0.4"/>
+        <path d="M25.5 22 L22 24 L25.5 26 Z" fill="#C81D25" stroke="#5A0008" stroke-width="0.4"/>
+        <rect x="21.2" y="23.2" width="1.6" height="1.6" rx="0.3" fill="#8B0010" stroke="#5A0008" stroke-width="0.3"/>
+        <circle cx="22" cy="24" r="0.4" fill="#FFD700"/>
+      </g>
+      <!-- lapel flower (boutonnière) -->
+      <g transform="translate(15 26)">
+        <circle r="1.2" fill="#E63946" stroke="#5A0008" stroke-width="0.3"/>
+        <circle r="0.5" fill="#FFD700"/>
+        <ellipse cx="-1.2" cy="0.8" rx="0.7" ry="0.3" fill="#4D8033" transform="rotate(-30 -1.2 0.8)"/>
+      </g>
+
+      <!-- lapel lines -->
+      <path d="M19 22 L17 35" stroke="#0D131A" stroke-width="0.6" fill="none"/>
+      <path d="M25 22 L27 35" stroke="#0D131A" stroke-width="0.6" fill="none"/>
+
+      <!-- pocket square -->
+      <rect x="26.5" y="27" width="2.2" height="1.6" fill="#C81D25"/>
+
+      <!-- ARMS — left arm down at side, right arm extended holding bouquet -->
+      <g class="dancer-arms">
+        <!-- left arm -->
+        <path d="M13 23 L10 36 L11.5 36.6 L14.5 24 Z" fill="url(#suitGrad)"/>
+        <!-- left hand -->
+        <circle cx="11" cy="37" r="1.6" fill="#E5B98A" stroke="#A77E54" stroke-width="0.3"/>
+        <!-- shirt cuff -->
+        <rect x="9.4" y="34.5" width="3" height="0.8" fill="#F5F5F0"/>
+
+        <!-- right arm — raised slightly outward holding bouquet -->
+        <path d="M31 23 L37 27 L36 28.5 L29.5 24.5 Z" fill="url(#suitGrad)"/>
+        <!-- right hand -->
+        <circle cx="38" cy="28" r="1.6" fill="#E5B98A" stroke="#A77E54" stroke-width="0.3"/>
+        <rect x="35.4" y="25.6" width="3" height="0.8" fill="#F5F5F0" transform="rotate(28 36.9 26)"/>
+      </g>
+
+      <!-- NECK -->
+      <rect x="20" y="18" width="4" height="3" fill="#E5B98A"/>
+
+      <!-- HEAD — clean oval, modern proportions -->
+      <ellipse cx="22" cy="13" rx="5.4" ry="6.2" fill="#EBC198" stroke="#A77E54" stroke-width="0.4"/>
+
+      <!-- jawline shadow -->
+      <path d="M17 14 Q22 19 27 14" stroke="#A77E54" stroke-width="0.3" fill="none" opacity="0.5"/>
+
+      <!-- HAIR — modern fade/quiff -->
+      <path d="M16.5 9 Q18 5 22 5 Q26 5 27.5 9 Q28 11 27 11.5 Q26 9 22 8.5 Q18 9 17 11.5 Q16 11 16.5 9 Z" fill="#1F1A14"/>
+      <!-- hair highlight -->
+      <path d="M19 7.5 Q22 6 25 7.5" stroke="#3B2E1F" stroke-width="0.5" fill="none" stroke-linecap="round"/>
+
+      <!-- BEARD — neat short stubble -->
+      <path d="M18 14.5 Q22 17 26 14.5 Q25 16.8 22 17.4 Q19 16.8 18 14.5 Z" fill="#1F1A14" opacity="0.85"/>
+
+      <!-- eyebrows — raised excitedly, asymmetric for character -->
+      <path d="M18.2 10.6 Q19.8 9.6 21.2 10.4" stroke="#1F1A14" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+      <path d="M22.8 10.2 Q24.4 9.2 25.8 10.4" stroke="#1F1A14" stroke-width="0.9" fill="none" stroke-linecap="round"/>
+
+      <!-- cool sunglasses (aviators!) -->
+      <g class="dancer-shades">
+        <rect x="17.6" y="11.6" width="3.6" height="2.4" rx="1.2" fill="#0A0A0A" stroke="#2D2D2D" stroke-width="0.4"/>
+        <rect x="22.8" y="11.6" width="3.6" height="2.4" rx="1.2" fill="#0A0A0A" stroke="#2D2D2D" stroke-width="0.4"/>
+        <line x1="21.2" y1="12.4" x2="22.8" y2="12.4" stroke="#2D2D2D" stroke-width="0.5"/>
+        <!-- lens shine -->
+        <path d="M18.2 12 L20 13.6" stroke="#FFFFFF" stroke-width="0.4" opacity="0.7"/>
+        <path d="M23.4 12 L25.2 13.6" stroke="#FFFFFF" stroke-width="0.4" opacity="0.7"/>
+      </g>
+
+      <!-- BIG TOOTHY GRIN — open mouth, teeth showing -->
+      <path d="M19.5 14.8 Q22 17.8 24.5 14.8 Q22 16 19.5 14.8 Z" fill="#3A1410" stroke="#1F1A14" stroke-width="0.4"/>
+      <!-- teeth -->
+      <rect x="20" y="14.9" width="4" height="0.9" fill="#FFFFFF"/>
+      <!-- tongue -->
+      <path d="M20.5 15.8 Q22 16.8 23.5 15.8 Q22 16.4 20.5 15.8 Z" fill="#E95F73"/>
+
+      <!-- cheek blush — flushed with joy -->
+      <ellipse cx="17.4" cy="14.6" rx="1.2" ry="0.7" fill="#E89B8B" opacity="0.55"/>
+      <ellipse cx="26.6" cy="14.6" rx="1.2" ry="0.7" fill="#E89B8B" opacity="0.55"/>
+
+      <!-- BOUQUET — held in right hand (anchored at hand position) -->
+      <g class="dancer-bouquet" transform="translate(38 26)">
+        <!-- stem bundle behind -->
+        <g stroke="#3A5A28" stroke-width="0.6" stroke-linecap="round" fill="none">
+          <line x1="-1" y1="2" x2="-2" y2="6"/>
+          <line x1="0"  y1="2" x2="0"  y2="6"/>
+          <line x1="1"  y1="2" x2="2"  y2="6"/>
+        </g>
+        <!-- leaves -->
+        <ellipse cx="-4" cy="-1" rx="2.6" ry="1.1" fill="#3F6B2B" stroke="#23401A" stroke-width="0.3" transform="rotate(-30 -4 -1)"/>
+        <ellipse cx="4"  cy="-1" rx="2.6" ry="1.1" fill="#4D8033" stroke="#23401A" stroke-width="0.3" transform="rotate(30 4 -1)"/>
+        <ellipse cx="-3" cy="2"  rx="2.2" ry="0.9" fill="#3F6B2B" stroke="#23401A" stroke-width="0.3" transform="rotate(-10 -3 2)"/>
+        <ellipse cx="3"  cy="2"  rx="2.2" ry="0.9" fill="#4D8033" stroke="#23401A" stroke-width="0.3" transform="rotate(10 3 2)"/>
+
+        <!-- baby's breath -->
+        <g fill="#FFFFFF" opacity="0.95">
+          <circle cx="-3" cy="-3" r="0.5"/>
+          <circle cx="3"  cy="-3" r="0.5"/>
+          <circle cx="0"  cy="-4" r="0.5"/>
+        </g>
+
+        <!-- ROSES — layered for depth -->
+        <g transform="translate(-2.5 -1)">
+          <circle r="2.4" fill="#7A0A1A" stroke="#3A0008" stroke-width="0.4"/>
+          <path d="M-1.6 0 Q0 -1.8 1.6 0 Q0 1.6 -1.6 0 Z" fill="#B71C2B"/>
+          <path d="M-1 -0.3 Q0 -1.1 1 -0.3 Q0 0.8 -1 -0.3 Z" fill="#E63946"/>
+          <circle r="0.5" fill="#3A0008"/>
+        </g>
+        <g transform="translate(2.5 -1)">
+          <circle r="2.4" fill="#8B0010" stroke="#3A0008" stroke-width="0.4"/>
+          <path d="M-1.6 0 Q0 -1.8 1.6 0 Q0 1.6 -1.6 0 Z" fill="#C81D25"/>
+          <path d="M-1 -0.3 Q0 -1.1 1 -0.3 Q0 0.8 -1 -0.3 Z" fill="#EF3A4C"/>
+          <circle r="0.5" fill="#3A0008"/>
+        </g>
+        <g transform="translate(0 1.5)">
+          <circle r="2.8" fill="#7A0A1A" stroke="#3A0008" stroke-width="0.4"/>
+          <path d="M-2 0 Q0 -2.2 2 0 Q0 2 -2 0 Z" fill="#B71C2B"/>
+          <path d="M-1.3 -0.4 Q0 -1.4 1.3 -0.4 Q0 1 -1.3 -0.4 Z" fill="#E63946"/>
+          <path d="M-0.7 -0.3 Q0 -0.8 0.7 -0.3 Q0 0.4 -0.7 -0.3 Z" fill="#FF6477"/>
+          <circle r="0.6" fill="#3A0008"/>
+        </g>
+
+        <!-- elegant wrap -->
+        <path d="M-3 4 L3 4 L2 7 L-2 7 Z" fill="#F8EFE0" stroke="#A07A55" stroke-width="0.4"/>
+        <path d="M-3 4 L3 4 L2.5 4.6 L-2.5 4.6 Z" fill="#E2D2BB"/>
+        <!-- ribbon -->
+        <path d="M-2.5 5.6 Q0 6.4 2.5 5.6 L2.5 6.4 Q0 7.2 -2.5 6.4 Z" fill="#9D1B2C" stroke="#5A0008" stroke-width="0.3"/>
+        <path d="M-0.5 6.5 L-1.4 8 L-0.5 8 L0 6.8 Z" fill="#9D1B2C" stroke="#5A0008" stroke-width="0.3"/>
+        <path d="M0.5 6.5 L1.4 8 L0.5 8 L0 6.8 Z" fill="#9D1B2C" stroke="#5A0008" stroke-width="0.3"/>
+      </g>
+    </svg>
+    <div class="avatar-name">TFTF</div>` */
 
   // Helpers
   function latLngToXY(ll) {
@@ -181,7 +575,10 @@ function initMap() {
     return [lerp(CAIRO[0], LUXOR[0], t), lerp(CAIRO[1], LUXOR[1], t)];
   });
 
+  let sequenceRunning = false;
   function runSequence() {
+    if (sequenceRunning) return;
+    sequenceRunning = true;
     const [luxorX, luxorY] = latLngToXY(LUXOR);
     const [cairoX, cairoY] = latLngToXY(CAIRO);
 
@@ -201,23 +598,29 @@ function initMap() {
       moveEl(tftfEl, cairoX, cairoY - 4);
       tftfEl.classList.add('visible');
 
-      // 3 — TFTF travels south after 0.7s
+      // 3 — TFTF travels south after 0.7s — smooth rAF-driven 60fps
       setTimeout(() => {
         tftfEl.classList.add('travelling');
-        let step = 0;
-        let dashOff = 0;
         const DURATION = 4200;
-        const interval = DURATION / STEPS;
+        const startTime = performance.now();
 
-        const march = setInterval(() => {
-          step++;
-          if (step > STEPS) { clearInterval(march); arrive(); return; }
-          const [px, py] = latLngToXY(routePts[step]);
+        function frame(now) {
+          const t = Math.min(1, (now - startTime) / DURATION);
+          const lat = lerp(CAIRO[0], LUXOR[0], t);
+          const lng = lerp(CAIRO[1], LUXOR[1], t);
+          const [px, py] = latLngToXY([lat, lng]);
           moveEl(tftfEl, px, py - 4);
-          routeLine.setLatLngs(routePts.slice(0, step + 1));
-          dashOff -= 1.5;
-          routeLine.setStyle({ dashOffset: String(dashOff) });
-        }, interval);
+
+          // Trail polyline exactly to car position
+          const pts = routePts.slice(0, Math.floor(t * STEPS) + 1);
+          pts.push([lat, lng]);
+          routeLine.setLatLngs(pts);
+          routeLine.setStyle({ dashOffset: String(-t * STEPS * 1.5) });
+
+          if (t < 1) requestAnimationFrame(frame);
+          else arrive();
+        }
+        requestAnimationFrame(frame);
       }, 700);
     }, 1000);
   }
@@ -226,13 +629,19 @@ function initMap() {
     tftfEl.classList.remove('travelling');
     roroEl.classList.remove('waiting');
 
-    // Position side by side in Luxor
     const [lx, ly] = latLngToXY(LUXOR);
-    moveEl(tftfEl, lx - 24, ly - 4);
-    moveEl(roroEl, lx + 24, ly - 4);
 
-    tftfEl.classList.add('celebrating');
-    roroEl.classList.add('celebrating');
+    // Park the car off to the left
+    moveEl(tftfEl, lx - 50, ly - 4);
+    tftfEl.classList.add('parked');
+
+    // TFTF steps out of the car after a short delay
+    setTimeout(() => {
+      moveEl(tftfDancer, lx - 22, ly - 4);
+      moveEl(roroEl,      lx + 22, ly - 4);
+      tftfDancer.classList.add('visible', 'dancing');
+      roroEl.classList.add('celebrating', 'dancing');
+    }, 450);
 
     // Fireworks burst — varied positions and icons
     const burst = setInterval(() => {
@@ -241,8 +650,10 @@ function initMap() {
     }, 180);
     setTimeout(() => {
       clearInterval(burst);
-      tftfEl.classList.remove('celebrating');
-      roroEl.classList.remove('celebrating');
+      tftfEl.classList.remove('celebrating', 'parked');
+      roroEl.classList.remove('celebrating', 'dancing');
+      tftfDancer.classList.remove('visible', 'dancing');
+      sequenceRunning = false;
     }, 4000);
   }
 
@@ -250,8 +661,17 @@ function initMap() {
   const mapSection = document.querySelector('.map-section');
   if (mapSection) mapSection._runMapSequence = runSequence;
 
-  // Also auto-run once map tiles are ready (fallback for when already in view)
-  map.whenReady(() => setTimeout(runSequence, 700));
+  // Dedicated observer: only run the car sequence when the map is truly visible
+  if (mapSection) {
+    const mapObserver = new IntersectionObserver((entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting && entry.intersectionRatio >= 0.55) {
+          map.whenReady(() => runSequence());
+        }
+      });
+    }, { threshold: [0.55] });
+    mapObserver.observe(mapSection);
+  }
 }
 
 function initTyping() {
