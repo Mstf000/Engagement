@@ -393,17 +393,45 @@ function initMap() {
       <circle cx="11" cy="37" r="1.6" fill="#E5B98A"/>
       <path d="M31 23 L37 27 L36 28.5 L29.5 24.5 Z" fill="url(#suitGrad2)"/>
       <circle cx="38" cy="28" r="1.6" fill="#E5B98A"/>
-      <rect x="20" y="18" width="4" height="3" fill="#E5B98A"/>
-      <ellipse cx="22" cy="13" rx="5.4" ry="6.2" fill="#EBC198" stroke="#A77E54" stroke-width="0.4"/>
-      <path d="M16.5 9 Q18 5 22 5 Q26 5 27.5 9 Q28 11 27 11.5 Q26 9 22 8.5 Q18 9 17 11.5 Q16 11 16.5 9 Z" fill="#1F1A14"/>
-      <path d="M18 14.5 Q22 17.4 26 14.5 Q25 16.8 22 17.4 Q19 16.8 18 14.5 Z" fill="#1F1A14" opacity="0.85"/>
-      <path d="M18.2 10.6 Q19.8 9.6 21.2 10.4" stroke="#1F1A14" stroke-width="0.9" fill="none" stroke-linecap="round"/>
-      <path d="M22.8 10.4 Q24.4 9.6 25.8 10.6" stroke="#1F1A14" stroke-width="0.9" fill="none" stroke-linecap="round"/>
-      <ellipse cx="19.8" cy="12.4" rx="0.6" ry="0.5" fill="#1F1A14"/>
-      <ellipse cx="24.2" cy="12.4" rx="0.6" ry="0.5" fill="#1F1A14"/>
-      <path d="M20 14.6 Q22 16 24 14.6" stroke="#1F1A14" stroke-width="0.6" fill="none" stroke-linecap="round"/>
-      <ellipse cx="17.4" cy="14.6" rx="1.1" ry="0.6" fill="#E89B8B" opacity="0.55"/>
-      <ellipse cx="26.6" cy="14.6" rx="1.1" ry="0.6" fill="#E89B8B" opacity="0.55"/>
+      <rect x="20" y="18" width="4" height="3" fill="#D9A87B"/>
+      <!-- realistic head with subtle gradient skin -->
+      <defs>
+        <radialGradient id="groomSkin" cx="40%" cy="40%" r="70%">
+          <stop offset="0%" stop-color="#F0CFA8"/>
+          <stop offset="100%" stop-color="#D9A87B"/>
+        </radialGradient>
+      </defs>
+      <ellipse cx="22" cy="13" rx="5.2" ry="6.1" fill="url(#groomSkin)" stroke="#8B6240" stroke-width="0.3"/>
+      <!-- jaw shadow -->
+      <path d="M17 14 Q22 18 27 14" stroke="#A07650" stroke-width="0.25" fill="none" opacity="0.4"/>
+      <!-- hair (slightly textured) -->
+      <path d="M16.5 9 Q18 5 22 5 Q26 5 27.5 9 Q28 11 27 11.5 Q26 9 22 8.5 Q18 9 17 11.5 Q16 11 16.5 9 Z" fill="#1A140E"/>
+      <path d="M19 7 Q22 6 25 7" stroke="#2F2418" stroke-width="0.3" fill="none" opacity="0.7"/>
+      <!-- short groomed beard -->
+      <path d="M18 14.8 Q22 17.4 26 14.8 Q25 16.6 22 17.2 Q19 16.6 18 14.8 Z" fill="#1A140E" opacity="0.78"/>
+      <!-- eyebrows: thin, natural arches -->
+      <path d="M18.4 10.9 Q19.8 10.3 21 10.8" stroke="#1A140E" stroke-width="0.55" fill="none" stroke-linecap="round"/>
+      <path d="M23 10.8 Q24.2 10.3 25.6 10.9" stroke="#1A140E" stroke-width="0.55" fill="none" stroke-linecap="round"/>
+      <!-- realistic eyes: sclera + iris + pupil + highlight -->
+      <ellipse cx="19.8" cy="12.4" rx="0.85" ry="0.55" fill="#FBF6EE"/>
+      <ellipse cx="24.2" cy="12.4" rx="0.85" ry="0.55" fill="#FBF6EE"/>
+      <circle cx="19.8" cy="12.4" r="0.5" fill="#5A3E1B"/>
+      <circle cx="24.2" cy="12.4" r="0.5" fill="#5A3E1B"/>
+      <circle cx="19.8" cy="12.4" r="0.25" fill="#1A140E"/>
+      <circle cx="24.2" cy="12.4" r="0.25" fill="#1A140E"/>
+      <circle cx="19.95" cy="12.25" r="0.12" fill="#FFFFFF"/>
+      <circle cx="24.35" cy="12.25" r="0.12" fill="#FFFFFF"/>
+      <!-- upper eye lid line -->
+      <path d="M19 12 Q19.8 11.85 20.65 12" stroke="#3B2E20" stroke-width="0.25" fill="none" stroke-linecap="round"/>
+      <path d="M23.35 12 Q24.2 11.85 25 12" stroke="#3B2E20" stroke-width="0.25" fill="none" stroke-linecap="round"/>
+      <!-- nose: subtle bridge + tip shadow + nostril hint -->
+      <path d="M22 12.6 Q21.6 13.6 22 14.2 Q22.4 13.6 22 12.6" stroke="#A07650" stroke-width="0.25" fill="none" opacity="0.6"/>
+      <ellipse cx="22" cy="14.3" rx="0.6" ry="0.3" fill="#C58E60" opacity="0.4"/>
+      <ellipse cx="21.7" cy="14.4" rx="0.1" ry="0.15" fill="#7A5235" opacity="0.55"/>
+      <ellipse cx="22.3" cy="14.4" rx="0.1" ry="0.15" fill="#7A5235" opacity="0.55"/>
+      <!-- realistic lips: defined cupid's bow and lower lip -->
+      <path d="M20.4 15.2 Q21 15 22 15.1 Q23 15 23.6 15.2 Q23 15.6 22 15.6 Q21 15.6 20.4 15.2 Z" fill="#A56856" opacity="0.85"/>
+      <path d="M20.6 15.2 Q22 15 23.4 15.2" stroke="#6B3F33" stroke-width="0.2" fill="none"/>
       <g class="char-bouquet" transform="translate(38 26)">
         <ellipse cx="-3" cy="-1" rx="2.4" ry="1" fill="#3F6B2B" transform="rotate(-30 -3 -1)"/>
         <ellipse cx="3"  cy="-1" rx="2.4" ry="1" fill="#4D8033" transform="rotate(30 3 -1)"/>
@@ -453,9 +481,17 @@ function initMap() {
       <path d="M30 21 L33 32 L31 32.6 L28.5 22 Z" fill="#F0CDA8"/>
       <circle cx="32" cy="33" r="1.5" fill="#F0CDA8" stroke="#A77E54" stroke-width="0.3"/>
       <!-- neck -->
-      <rect x="20" y="17" width="4" height="3" fill="#F0CDA8"/>
-      <!-- head -->
-      <ellipse cx="22" cy="12" rx="5.4" ry="6.2" fill="#F4D2AC" stroke="#A77E54" stroke-width="0.4"/>
+      <rect x="20" y="17" width="4" height="3" fill="#E8BC92"/>
+      <!-- realistic head with skin gradient -->
+      <defs>
+        <radialGradient id="brideSkin" cx="40%" cy="40%" r="70%">
+          <stop offset="0%" stop-color="#FBE0C2"/>
+          <stop offset="100%" stop-color="#E8BC92"/>
+        </radialGradient>
+      </defs>
+      <ellipse cx="22" cy="12" rx="5.2" ry="6.1" fill="url(#brideSkin)" stroke="#A77E54" stroke-width="0.3"/>
+      <!-- subtle cheekbone contour -->
+      <path d="M17 13 Q19 15 22 15.6 Q25 15 27 13" stroke="#C99977" stroke-width="0.2" fill="none" opacity="0.5"/>
       <!-- long hair flowing -->
       <path d="M16.5 11 Q15 22 17 28 L20 28 Q19 20 18 12 Z" fill="#2B1810"/>
       <path d="M27.5 11 Q29 22 27 28 L24 28 Q25 20 26 12 Z" fill="#2B1810"/>
@@ -468,21 +504,41 @@ function initMap() {
       <circle cx="20" cy="5.5" r="0.5" fill="#D4AF37"/>
       <circle cx="22" cy="5"   r="0.6" fill="#FFFFFF" stroke="#D4AF37" stroke-width="0.3"/>
       <circle cx="24" cy="5.5" r="0.5" fill="#D4AF37"/>
-      <!-- eyelashes / closed-eye liner curve -->
-      <path d="M19 11.8 Q20 11.4 21 11.8" stroke="#1F1A14" stroke-width="0.6" fill="none" stroke-linecap="round"/>
-      <path d="M23 11.8 Q24 11.4 25 11.8" stroke="#1F1A14" stroke-width="0.6" fill="none" stroke-linecap="round"/>
-      <!-- eyes -->
-      <ellipse cx="20" cy="12.6" rx="0.6" ry="0.5" fill="#1F1A14"/>
-      <ellipse cx="24" cy="12.6" rx="0.6" ry="0.5" fill="#1F1A14"/>
-      <!-- lashes -->
-      <path d="M19.4 12 L19.2 11.5" stroke="#1F1A14" stroke-width="0.4" stroke-linecap="round"/>
-      <path d="M24.6 12 L24.8 11.5" stroke="#1F1A14" stroke-width="0.4" stroke-linecap="round"/>
-      <!-- blush -->
-      <ellipse cx="17.4" cy="14.6" rx="1.3" ry="0.7" fill="#F0A8A0" opacity="0.6"/>
-      <ellipse cx="26.6" cy="14.6" rx="1.3" ry="0.7" fill="#F0A8A0" opacity="0.6"/>
-      <!-- lipstick smile -->
-      <path d="M20 15 Q22 16.4 24 15" stroke="#C44569" stroke-width="0.8" fill="none" stroke-linecap="round"/>
-      <path d="M20.5 15.2 Q22 15.8 23.5 15.2" stroke="#A03050" stroke-width="0.4" fill="#E95F73"/>
+      <!-- thin natural eyebrows -->
+      <path d="M18.6 10.6 Q20 10 21.4 10.6" stroke="#3B2A18" stroke-width="0.5" fill="none" stroke-linecap="round"/>
+      <path d="M22.6 10.6 Q24 10 25.4 10.6" stroke="#3B2A18" stroke-width="0.5" fill="none" stroke-linecap="round"/>
+      <!-- upper lash line -->
+      <path d="M19 12 Q20 11.7 21 12" stroke="#1A140E" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+      <path d="M23 12 Q24 11.7 25 12" stroke="#1A140E" stroke-width="0.35" fill="none" stroke-linecap="round"/>
+      <!-- realistic eyes: sclera + iris + pupil + highlight -->
+      <ellipse cx="20" cy="12.5" rx="0.85" ry="0.55" fill="#FBF6EE"/>
+      <ellipse cx="24" cy="12.5" rx="0.85" ry="0.55" fill="#FBF6EE"/>
+      <circle cx="20" cy="12.5" r="0.5" fill="#4A2E16"/>
+      <circle cx="24" cy="12.5" r="0.5" fill="#4A2E16"/>
+      <circle cx="20" cy="12.5" r="0.22" fill="#1A140E"/>
+      <circle cx="24" cy="12.5" r="0.22" fill="#1A140E"/>
+      <circle cx="20.15" cy="12.35" r="0.14" fill="#FFFFFF"/>
+      <circle cx="24.15" cy="12.35" r="0.14" fill="#FFFFFF"/>
+      <!-- individual lashes -->
+      <path d="M19.3 11.95 L19.1 11.55" stroke="#1A140E" stroke-width="0.25" stroke-linecap="round"/>
+      <path d="M20 11.85 L20 11.4" stroke="#1A140E" stroke-width="0.25" stroke-linecap="round"/>
+      <path d="M20.7 11.95 L20.9 11.55" stroke="#1A140E" stroke-width="0.25" stroke-linecap="round"/>
+      <path d="M23.3 11.95 L23.1 11.55" stroke="#1A140E" stroke-width="0.25" stroke-linecap="round"/>
+      <path d="M24 11.85 L24 11.4" stroke="#1A140E" stroke-width="0.25" stroke-linecap="round"/>
+      <path d="M24.7 11.95 L24.9 11.55" stroke="#1A140E" stroke-width="0.25" stroke-linecap="round"/>
+      <!-- nose: refined bridge + tip + nostrils -->
+      <path d="M22 12.6 Q21.7 13.6 22 14.2 Q22.3 13.6 22 12.6" stroke="#C99977" stroke-width="0.22" fill="none" opacity="0.7"/>
+      <ellipse cx="22" cy="14.3" rx="0.55" ry="0.28" fill="#D9A87B" opacity="0.45"/>
+      <ellipse cx="21.7" cy="14.4" rx="0.09" ry="0.13" fill="#8B6240" opacity="0.6"/>
+      <ellipse cx="22.3" cy="14.4" rx="0.09" ry="0.13" fill="#8B6240" opacity="0.6"/>
+      <!-- subtle blush -->
+      <ellipse cx="17.6" cy="14.4" rx="1" ry="0.55" fill="#E89B8B" opacity="0.35"/>
+      <ellipse cx="26.4" cy="14.4" rx="1" ry="0.55" fill="#E89B8B" opacity="0.35"/>
+      <!-- realistic lipstick: defined upper + fuller lower lip -->
+      <path d="M20.4 15 Q21 14.8 22 14.95 Q23 14.8 23.6 15 Q23 14.95 22 14.95 Q21 14.95 20.4 15 Z" fill="#9D2D4A"/>
+      <path d="M20.4 15 Q21 15.5 22 15.6 Q23 15.5 23.6 15 Q22.6 15.4 22 15.4 Q21.4 15.4 20.4 15 Z" fill="#C44569"/>
+      <!-- lip highlight -->
+      <ellipse cx="22" cy="15.2" rx="0.5" ry="0.1" fill="#F8C8D4" opacity="0.7"/>
       <!-- earring -->
       <circle cx="16.5" cy="14" r="0.5" fill="#FFFFFF" stroke="#D4AF37" stroke-width="0.3"/>
       <circle cx="27.5" cy="14" r="0.5" fill="#FFFFFF" stroke="#D4AF37" stroke-width="0.3"/>
