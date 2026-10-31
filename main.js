@@ -187,10 +187,10 @@ function initMap() {
   // Bounds include the whole delta up to the Mediterranean coast
   map.fitBounds([CAIRO, LUXOR, [31.6, 29.9], [31.5, 32.0]], { paddingTopLeft: [30, 20], paddingBottomRight: [30, 20] });
 
-  // Esri World Topo — keyless, in colour (CARTO basemaps now watermark requests without an API key)
+  // Esri World Physical — keyless, in colour, no baked-in labels (CARTO basemaps now watermark requests without an API key)
   L.tileLayer(
-    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}',
-    { maxZoom: 19, attribution: 'Tiles &copy; Esri' }
+    'https://server.arcgisonline.com/ArcGIS/rest/services/World_Physical_Map/MapServer/tile/{z}/{y}/{x}',
+    { maxZoom: 8, attribution: 'Tiles &copy; Esri' }
   ).addTo(map);
   map.attributionControl.setPrefix(false);
 
