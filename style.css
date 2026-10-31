@@ -818,8 +818,13 @@ html {
 }
 
 /* Hide Leaflet UI chrome */
-.leaflet-control-attribution,
 .leaflet-control-zoom { display: none !important; }
+/* Attribution is required by the tile provider — keep it, just quiet */
+.leaflet-container .leaflet-control-attribution {
+  font-size: 8px;
+  background: rgba(255,255,255,0.6);
+  color: var(--text-mid);
+}
 
 /* Distance badge */
 .dist-badge {
